@@ -1,0 +1,58 @@
+
+
+
+class Test_Case
+{
+	public:
+		virtual void init(int size) {};
+		virtual void run() {};
+		virtual void sync_wait() {};//for async test case
+		virtual bool verify() { return false; };
+
+};
+
+
+
+template<typename T>
+class Vector_Add :public Test_Case
+{
+public:
+	virtual void init(int size) 
+	{
+		m_size = size; 
+		m_v0.resize(size);
+		m_v1.resize(size);
+		for (int i = 0; i < m_size; i++)
+		{
+			m_v0[i] = 1;
+			m_v1[i] = 1;
+		}
+
+		m_result.resize(size);
+	}
+	virtual void run() 
+	{
+		for (int i = 0; i < m_size; i++)
+		{
+			m_result[i] = m_v0[i] + m_v1[i];
+		}
+	};
+
+	virtual bool verify() 
+	{
+		for (int i = 0; i < m_size; i++)
+		{
+			if (m_result[i] != m_v0[i] + m_v1[i])
+			{
+				return false;
+				break;
+			}
+		}
+		return true;
+	};
+private:
+	int m_size = 0;
+	std::vector<T> m_v0;
+	std::vector<T> m_v1;
+	std::vector<T> m_result;
+};
