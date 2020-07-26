@@ -1,0 +1,11 @@
+#the build directory
+build*/
+
+#.swap files
+*.swp
+
+#.vscode
+.*
+
+#pycharm
+__pycache__
