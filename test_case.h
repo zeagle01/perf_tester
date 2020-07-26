@@ -7,6 +7,7 @@ class Test_Case
 		virtual void init(int size) {};
 		virtual void run() {};
 		virtual void sync_wait() {};//for async test case
+		virtual size_t get_size_in_byte() { return 0; }
 		virtual bool verify() { return false; };
 
 };
@@ -30,6 +31,9 @@ public:
 
 		m_result.resize(size);
 	}
+
+	virtual size_t get_size_in_byte() override { return m_size*sizeof(T); }
+
 	virtual void run() 
 	{
 		for (int i = 0; i < m_size; i++)

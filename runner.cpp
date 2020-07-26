@@ -19,6 +19,10 @@ void Runner::run(Test_Case* test_case)
 
 void Runner::run()
 {
+	if (!os)
+	{
+		os = std::make_unique<std::ofstream>("result.txt");
+	}
 
 	m_cases.push_back(std::make_unique<Vector_Add<int>>());
 	m_cases.push_back(std::make_unique<Vector_Add<float>>());
@@ -33,11 +37,16 @@ void Runner::run()
 		{
 			m_cases[i]->init(size);
 
+			long average_duration=0;
 			for (int avg_i = 0; avg_i < m_average_num; avg_i++)
 			{
 				run(m_cases[i].get());
+				average_duration += m_duration;
 				CE_INFO("duration {0}", m_duration);
 			}
+			average_duration /= m_average_num;
+			*os << m_cases[i]->get_size_in_byte() << " ";
+			*os << average_duration << " ";
 
 			if (m_verify)
 			{
@@ -48,6 +57,7 @@ void Runner::run()
 				}
 			}
 		}
+		*os << std::endl;
 
 	}
 

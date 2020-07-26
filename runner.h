@@ -5,6 +5,7 @@
 #include <memory> 
 #include <vector>
 #include "test_case.h"
+#include <fstream>
 
 
 class Test_Case;
@@ -28,6 +29,9 @@ private:
 	int m_min_size_in_log2=5;
 
 	bool m_verify = false;
+
+	std::unique_ptr<std::ofstream >os;
+
 
 
 };
