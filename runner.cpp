@@ -28,6 +28,12 @@ void Runner::run()
 	m_cases.push_back(std::make_unique<Vector_Add<float>>());
 
 
+	*os << "#";
+	for (int i = 0; i < m_cases.size(); i++)
+	{
+		*os << " " << m_cases[i]->get_name();
+	}
+	*os << std::endl;
 
 	for (int size_i = m_min_size_in_log2; size_i < m_max_size_in_log2; size_i++)
 	{

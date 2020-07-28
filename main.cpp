@@ -12,8 +12,7 @@ int main()
 	BEGIN_PROFILING();
 
 
-	CE_TRACE("aaa");
-	CE_INFO("aaa");
+	CE_INFO("begin runing");
 
 	Runner runner;
 	runner.run();

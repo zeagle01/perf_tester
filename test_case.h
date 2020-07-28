@@ -1,4 +1,8 @@
 
+#pragma once
+
+#include <string>
+
 
 
 class Test_Case
@@ -9,6 +13,7 @@ class Test_Case
 		virtual void sync_wait() {};//for async test case
 		virtual size_t get_size_in_byte() { return 0; }
 		virtual bool verify() { return false; };
+		virtual std::string get_name() { return "test_case"; };
 
 };
 
@@ -18,6 +23,8 @@ template<typename T>
 class Vector_Add :public Test_Case
 {
 public:
+	std::string get_name() { return "Vector<T>"; }
+
 	virtual void init(int size) 
 	{
 		m_size = size; 
@@ -60,3 +67,10 @@ private:
 	std::vector<T> m_v1;
 	std::vector<T> m_result;
 };
+
+
+template<>
+std::string Vector_Add<int>::get_name() { return "Vector_Add<int>"; }
+
+template<>
+std::string Vector_Add<float>::get_name() { return "Vector_Add<float>"; }
