@@ -30,5 +30,6 @@ if(CUDAToolkit_FOUND)
 	message("CUDAToolkit_LIBRARY_DIR: ${CUDAToolkit_LIBRARY_DIR}")
 	message("CUDAToolkit_TARGET_DIR: ${CUDAToolkit_TARGET_DIR}")
 	message("CUDAToolkit_NVCC_EXECUTABLE: ${CUDAToolkit_NVCC_EXECUTABLE}")
+
 	enable_language(CUDA)
 endif()

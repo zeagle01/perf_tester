@@ -4,6 +4,7 @@
 
 #include "log.h"
 #include "profiler.h"
+#include  "vector_add.h"
 
 
 void Runner::run(Test_Case* test_case)
@@ -26,6 +27,7 @@ void Runner::run()
 
 	m_cases.push_back(std::make_unique<Vector_Add<int>>());
 	m_cases.push_back(std::make_unique<Vector_Add<float>>());
+	m_cases.push_back(std::make_unique<Cuda_Vector_Add>());
 
 
 	*os << "#";
