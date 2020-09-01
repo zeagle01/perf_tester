@@ -28,7 +28,7 @@ private:
 	int m_max_size_in_log2=26;
 	int m_min_size_in_log2=8;
 
-	bool m_verify = false;
+	bool m_verify = true;
 
 	std::unique_ptr<std::ofstream >os;
 

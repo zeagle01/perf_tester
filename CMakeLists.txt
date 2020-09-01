@@ -18,6 +18,8 @@ profiler.h
 profiler.cpp
 vector_add.h
 vector_add.cu
+cuda_random.h
+cuda_random.cu
 )
 
 
@@ -33,3 +35,6 @@ if(CUDAToolkit_FOUND)
 
 	enable_language(CUDA)
 endif()
+
+
+target_link_libraries(perf_test PUBLIC curand)

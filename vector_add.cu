@@ -62,8 +62,8 @@ bool Cuda_Vector_Add::verify()
 
 
 	cudaMemcpy(m_a.data(), da, get_size_in_byte(), cudaMemcpyDeviceToHost);
-	cudaMemcpy(db, m_b.data(), get_size_in_byte(), cudaMemcpyDeviceToHost);
-	cudaMemcpy(dc, m_c.data(), get_size_in_byte(), cudaMemcpyDeviceToHost);
+	cudaMemcpy(m_b.data(), db, get_size_in_byte(), cudaMemcpyDeviceToHost);
+	cudaMemcpy(m_c.data(), dc, get_size_in_byte(), cudaMemcpyDeviceToHost);
 
 	for (int i = 0; i < m_a.size(); i++)
 	{

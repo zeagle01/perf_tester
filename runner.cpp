@@ -5,6 +5,7 @@
 #include "log.h"
 #include "profiler.h"
 #include  "vector_add.h"
+#include "cuda_random.h"
 
 
 void Runner::run(Test_Case* test_case)
@@ -28,6 +29,7 @@ void Runner::run()
 	m_cases.push_back(std::make_unique<Vector_Add<int>>());
 	m_cases.push_back(std::make_unique<Vector_Add<float>>());
 	m_cases.push_back(std::make_unique<Cuda_Vector_Add>());
+	m_cases.push_back(std::make_unique<Cuda_Random>());
 
 
 	*os << "#";
@@ -61,7 +63,7 @@ void Runner::run()
 				bool good = m_cases[i]->verify();
 				if (!good)
 				{
-					CE_ERROR("case {0} verify failed", (void*)m_cases[i].get());
+					CE_ERROR("case {0} {1} verify failed", m_cases[i]->get_name(), (void*)m_cases[i].get());
 				}
 			}
 		}
