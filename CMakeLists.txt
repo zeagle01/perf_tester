@@ -16,10 +16,13 @@ log.h
 log.cpp
 profiler.h
 profiler.cpp
-vector_add.h
-vector_add.cu
+vector_add_cuda.h
+vector_add_cuda.cu
+vector_add_omp.h
+vector_add_omp.cpp
 cuda_random.h
 cuda_random.cu
+
 )
 
 
@@ -38,3 +41,12 @@ endif()
 
 
 target_link_libraries(perf_test PUBLIC curand)
+
+
+find_package(OpenMP)
+if(OpenMP_CXX_FOUND)
+	message("omp found!")
+    target_link_libraries(perf_test PUBLIC OpenMP::OpenMP_CXX)
+else()
+	message("omp not found!")
+endif()

@@ -4,7 +4,7 @@
 
 #include "device_launch_parameters.h"
 #include "cuda_runtime.h"
-#include "vector_add.h"
+#include "vector_add_cuda.h"
 
 __global__ void vector_add(int num,float* c, float* a, float* b)
 {
@@ -65,14 +65,15 @@ bool Cuda_Vector_Add::verify()
 	cudaMemcpy(m_b.data(), db, get_size_in_byte(), cudaMemcpyDeviceToHost);
 	cudaMemcpy(m_c.data(), dc, get_size_in_byte(), cudaMemcpyDeviceToHost);
 
-	for (int i = 0; i < m_a.size(); i++)
+	for (int i = 0; i < m_size; i++)
 	{
-		if (m_c[i] != 2.f)
+		if (m_c[i] != m_a[i] + m_b[i])
 		{
 			return false;
+			break;
 		}
 	}
-	return false;
+	return true;
 };
 
 Cuda_Vector_Add::~Cuda_Vector_Add()

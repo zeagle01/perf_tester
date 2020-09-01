@@ -4,7 +4,8 @@
 
 #include "log.h"
 #include "profiler.h"
-#include  "vector_add.h"
+#include  "vector_add_cuda.h"
+#include  "vector_add_omp.h"
 #include "cuda_random.h"
 
 
@@ -29,6 +30,7 @@ void Runner::run()
 	m_cases.push_back(std::make_unique<Vector_Add<int>>());
 	m_cases.push_back(std::make_unique<Vector_Add<float>>());
 	m_cases.push_back(std::make_unique<Cuda_Vector_Add>());
+	m_cases.push_back(std::make_unique<Omp_Vector_Add>());
 	m_cases.push_back(std::make_unique<Cuda_Random>());
 
 
@@ -43,6 +45,8 @@ void Runner::run()
 	{
 		int size = 1 << size_i;
 
+		CE_INFO("----------size {0}", size);
+
 		for (int i = 0; i < m_cases.size(); i++)
 		{
 			m_cases[i]->init(size);
@@ -52,7 +56,7 @@ void Runner::run()
 			{
 				run(m_cases[i].get());
 				average_duration += m_duration;
-				CE_INFO("duration {0}", m_duration);
+				CE_INFO("{0} duration {1} ", m_cases[i]->get_name(), m_duration);
 			}
 			average_duration /= m_average_num;
 			*os << m_cases[i]->get_size_in_byte() << " ";
