@@ -52,9 +52,9 @@
 		~Scope_Timer();
 
 	private:
-		std::chrono::time_point<std::chrono::steady_clock> m_begin;
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_begin;
 		std::string m_name;
-		long* m_duration;
+		long * m_duration;
 	};
 
 

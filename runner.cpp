@@ -6,6 +6,8 @@
 #include "profiler.h"
 #include  "vector_add_cuda.h"
 #include  "vector_add_omp.h"
+#include  "vector_add_serial.h"
+#include  "vector_add_ppl.h"
 #include "cuda_random.h"
 
 
@@ -30,8 +32,9 @@ void Runner::run()
 	m_cases.push_back(std::make_unique<Vector_Add<int>>());
 	m_cases.push_back(std::make_unique<Vector_Add<float>>());
 	m_cases.push_back(std::make_unique<Cuda_Vector_Add>());
+	m_cases.push_back(std::make_unique<Vector_Add_Ppl>());
 	m_cases.push_back(std::make_unique<Omp_Vector_Add>());
-	m_cases.push_back(std::make_unique<Cuda_Random>());
+	//m_cases.push_back(std::make_unique<Cuda_Random>());
 
 
 	*os << "#";

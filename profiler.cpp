@@ -16,23 +16,23 @@
 Scope_Timer::Scope_Timer(std::string name)
 	:
 	m_name(name),
-	m_begin(std::chrono::steady_clock::now()),
+	m_begin(std::chrono::high_resolution_clock::now()),
 	m_duration(nullptr)
 
 {
 };
 
-Scope_Timer::Scope_Timer(std::string name,long* duration)
+Scope_Timer::Scope_Timer(std::string name,long * duration)
 	:
 	m_name(name),
-	m_begin(std::chrono::steady_clock::now()),
+	m_begin(std::chrono::high_resolution_clock::now()),
 	m_duration(duration)
 {
 };
 
 Scope_Timer::~Scope_Timer()
 {
-	std::chrono::time_point<std::chrono::steady_clock> end = std::chrono::steady_clock::now();
+	std::chrono::time_point<std::chrono::high_resolution_clock> end = std::chrono::high_resolution_clock::now();
 	long begin_t = std::chrono::time_point_cast<std::chrono::microseconds>(m_begin).time_since_epoch().count();
 	long end_t = std::chrono::time_point_cast<std::chrono::microseconds>(end).time_since_epoch().count();
 	uint32_t thread_id = std::hash<std::thread::id>{} (std::this_thread::get_id());

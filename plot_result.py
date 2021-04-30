@@ -21,7 +21,7 @@ for i,case_name in enumerate(case_names):
     ax[0].set_xlabel('size(byte)')
     ax[0].set_ylabel('T(s)')
 
-    data[:,i*2+1]/=1e6
+    data[:,i*2+1]=(data[:,i*2+1]+1)/1e6
     ax[0].plot(data[:,i*2+0],data[:,i*2+1],'-o',label=case_name)
 
 

@@ -24,9 +24,9 @@ private:
 	//std::vector<long> m_durations;
 	long m_duration;
 
-	int m_average_num = 1;
-	int m_max_size_in_log2=26;
-	int m_min_size_in_log2=8;
+	int m_average_num = 3;
+	int m_max_size_in_log2 = 26;
+	int m_min_size_in_log2 = 8;
 
 	bool m_verify = true;
 
