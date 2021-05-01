@@ -29,7 +29,8 @@ composed_test_case.h
 devices.h
 problems.h
 compute_kernels.h
-compute_kernels.cu
+loop.h
+loop.cu
 )
 
 

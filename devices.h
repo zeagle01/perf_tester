@@ -32,6 +32,9 @@ struct OMP: CPU<T>
 };
 
 template<typename T>
+struct PPL : CPU<T> { };
+
+template<typename T>
 struct CUDA
 {
 	void dowload(std::vector<T>& host_out, T* device_out)

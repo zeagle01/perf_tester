@@ -3,13 +3,15 @@
 
 #include <sstream>
 
+#include "loop.h"
 
 
 template<
 	typename T, 
 	template<typename U> typename Problem, 
 	template<typename U> typename Device, 
-	template<typename U> typename Updater
+	template<typename U> typename Kernel 
+	//template<typename U, typename De, typename Kernel> typename Updater
 	>
 class Composed_Test_Case :public Test_Case
 {
@@ -19,11 +21,12 @@ public:
 		m_size = size;
 		m_problem.init(m_in, m_out, m_in_col, m_in_row, m_out_col, m_out_row, size);
 		m_device.upload(m_device_in, m_device_out, m_in, m_out);
-		m_updater.init_extra_data(m_in, m_in_col, m_in_row, m_out_col, m_out_row);
+		m_looper.init_extra_data(m_in, m_in_col, m_in_row, m_out_col, m_out_row);
 	};
 	void run() override 
 	{ 
-		m_updater.apply(m_device_in, m_device_out, m_in_col, m_in_row, m_out_col, m_out_row);
+		//m_updater.apply(m_device_in, m_device_out, m_size, m_in_col, m_in_row, m_out_col, m_out_row);
+		m_looper.apply(m_device_in, m_device_out, m_size, m_in_col, m_in_row, m_out_col, m_out_row);
 	};
 
 	//for async test case
@@ -46,7 +49,7 @@ public:
 	std::string get_name() override 
 	{ 
 
-		auto type_str = std::string(typeid(Updater<T>).name());
+		auto type_str = std::string(typeid(Kernel<T>).name());
 		std::stringstream ss;
 		ss << type_str;
 		std::string word;
@@ -59,7 +62,7 @@ private:
 
 	Problem<T> m_problem;
 	Device<T> m_device;
-	Updater<T> m_updater;
+	Loop<T, Device, Kernel> m_looper;
 
 	int m_size;
 	std::vector<T> m_in;

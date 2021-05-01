@@ -38,20 +38,37 @@ void Runner::run()
 	}
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add1, CPU, CPU_Add>
+		Composed_Test_Case<float, Vector_Add1, CPU, Add_Kernel>
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add1, OMP, OMP_Add>
+		Composed_Test_Case<float, Vector_Add1, OMP, Add_Kernel>
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add1, CUDA, CUDA_Add>
+		Composed_Test_Case<float, Vector_Add1, PPL, Add_Kernel>
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add1, CPU, PPL_Add>
+		Composed_Test_Case<float, Vector_Add1, CUDA, Add_Kernel>
 	>());
+
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<float, Multiply_Add_N_Times, CPU, Mupltiply_Add_N_Times_Kernel>
+	>());
+
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<float, Multiply_Add_N_Times, OMP, Mupltiply_Add_N_Times_Kernel>
+	>());
+
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<float, Multiply_Add_N_Times, PPL, Mupltiply_Add_N_Times_Kernel>
+	>());
+
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<float, Multiply_Add_N_Times, CUDA, Mupltiply_Add_N_Times_Kernel>
+	>());
+
 
 //	m_cases.push_back(std::make_unique<Vector_Add<int>>());
 //	m_cases.push_back(std::make_unique<Vector_Add<float>>());
