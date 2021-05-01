@@ -49,14 +49,23 @@ public:
 	std::string get_name() override 
 	{ 
 
-		auto type_str = std::string(typeid(Kernel<T>).name());
-		std::stringstream ss;
-		ss << type_str;
+		std::string ret;
+		auto problem_str = std::string(typeid(Problem).name());
+		std::stringstream ss0;
+		ss0 << problem_str;
 		std::string word;
-		ss >> word;
-		ss >> word;
+		ss0 >> word;
+		ss0 >> word;
+		ret = word;
 
-		return word;
+		auto device_str = std::string(typeid(Device<T>).name());
+		std::stringstream ss1;
+		ss1 << device_str;
+
+		ss1 >> word;
+		ss1 >> word;
+		ret += "_" + word;
+		return ret;
 	};
 private:
 

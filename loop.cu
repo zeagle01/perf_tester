@@ -3,6 +3,7 @@
 
 #include "cuda_runtime.h"
 #include "compute_kernels.h"
+#include "compute_kernels.h"
 
 
 template<typename T, typename Kernel> __global__ void cuda_for_loop(T* in, T* out, int size, int in_col, int in_row, int out_col, int out_row)

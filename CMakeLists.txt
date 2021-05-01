@@ -16,13 +16,6 @@ log.h
 log.cpp
 profiler.h
 profiler.cpp
-vector_add_cuda.h
-vector_add_cuda.cu
-vector_add_omp.h
-vector_add_omp.cpp
-vector_add_omp.cpp
-vector_add_ppl.h
-vector_add_ppl.cpp
 cuda_random.h
 cuda_random.cu
 composed_test_case.h

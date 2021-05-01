@@ -4,9 +4,6 @@
 
 #include "log.h"
 #include "profiler.h"
-#include  "vector_add_cuda.h"
-#include  "vector_add_omp.h"
-#include  "vector_add_ppl.h"
 #include "cuda_random.h"
 #include "composed_test_case.h"
 #include "devices.h"
@@ -38,19 +35,19 @@ void Runner::run()
 	}
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add1, CPU, Add_Kernel>
+		Composed_Test_Case<float, Vector_Add, CPU, Add_Kernel>
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add1, OMP, Add_Kernel>
+		Composed_Test_Case<float, Vector_Add, OMP, Add_Kernel>
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add1, PPL, Add_Kernel>
+		Composed_Test_Case<float, Vector_Add, PPL, Add_Kernel>
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add1, CUDA, Add_Kernel>
+		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel>
 	>());
 
 	m_cases.push_back(std::make_unique<
@@ -70,15 +67,6 @@ void Runner::run()
 	>());
 
 
-//	m_cases.push_back(std::make_unique<Vector_Add<int>>());
-//	m_cases.push_back(std::make_unique<Vector_Add<float>>());
-//	m_cases.push_back(std::make_unique<Cuda_Vector_Add>());
-//	m_cases.push_back(std::make_unique<Vector_Add_Ppl>());
-//	m_cases.push_back(std::make_unique<Omp_Vector_Add>());
-//	m_cases.push_back(std::make_unique<Vector_Add_Multiply>());
-//	m_cases.push_back(std::make_unique<Vector_Add_Multiply_Ppl>());
-//	m_cases.push_back(std::make_unique<Omp_Vector_Add_Multiply>());
-//	m_cases.push_back(std::make_unique<Cuda_Vector_Add_Multiply>());
 	//m_cases.push_back(std::make_unique<Cuda_Random>());
 
 

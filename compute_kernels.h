@@ -3,8 +3,6 @@
 
 
 #include "cuda_runtime.h"
-#include "vector_add_cuda.h"
-#include "ppl.h"
 #include "devices.h"
 
 #ifdef __CUDACC__

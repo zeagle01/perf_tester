@@ -3,7 +3,7 @@
 
 
 template<typename T>
-struct Vector_Add1
+struct Vector_Add
 {
 	void init(std::vector<T>& in, std::vector<T>& out, int& m_in_col, int& m_in_row, int& m_out_col, int& m_out_row, int size)
 	{
