@@ -8,6 +8,10 @@
 #include  "vector_add_omp.h"
 #include  "vector_add_ppl.h"
 #include "cuda_random.h"
+#include "composed_test_case.h"
+#include "devices.h"
+#include "problems.h"
+#include "compute_kernels.h"
 
 
 void Runner::run(Test_Case* test_case)
@@ -21,6 +25,11 @@ void Runner::run(Test_Case* test_case)
 }
 
 
+
+
+
+
+
 void Runner::run()
 {
 	if (!os)
@@ -28,15 +37,31 @@ void Runner::run()
 		os = std::make_unique<std::ofstream>("result.txt");
 	}
 
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<float, Vector_Add1, CPU, CPU_Add>
+	>());
+
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<float, Vector_Add1, OMP, OMP_Add>
+	>());
+
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<float, Vector_Add1, CUDA, CUDA_Add>
+	>());
+
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<float, Vector_Add1, CPU, PPL_Add>
+	>());
+
 //	m_cases.push_back(std::make_unique<Vector_Add<int>>());
 //	m_cases.push_back(std::make_unique<Vector_Add<float>>());
 //	m_cases.push_back(std::make_unique<Cuda_Vector_Add>());
 //	m_cases.push_back(std::make_unique<Vector_Add_Ppl>());
 //	m_cases.push_back(std::make_unique<Omp_Vector_Add>());
-	m_cases.push_back(std::make_unique<Vector_Add_Multiply>());
-	m_cases.push_back(std::make_unique<Vector_Add_Multiply_Ppl>());
-	m_cases.push_back(std::make_unique<Omp_Vector_Add_Multiply>());
-	m_cases.push_back(std::make_unique<Cuda_Vector_Add_Multiply>());
+//	m_cases.push_back(std::make_unique<Vector_Add_Multiply>());
+//	m_cases.push_back(std::make_unique<Vector_Add_Multiply_Ppl>());
+//	m_cases.push_back(std::make_unique<Omp_Vector_Add_Multiply>());
+//	m_cases.push_back(std::make_unique<Cuda_Vector_Add_Multiply>());
 	//m_cases.push_back(std::make_unique<Cuda_Random>());
 
 

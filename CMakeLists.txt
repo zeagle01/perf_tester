@@ -25,7 +25,11 @@ vector_add_ppl.h
 vector_add_ppl.cpp
 cuda_random.h
 cuda_random.cu
-
+composed_test_case.h
+devices.h
+problems.h
+compute_kernels.h
+compute_kernels.cu
 )
 
 

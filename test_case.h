@@ -6,6 +6,10 @@
 
 
 
+
+
+
+
 class Test_Case
 {
 	public:
@@ -20,7 +24,7 @@ class Test_Case
 
 
 
-template<typename T>
+template<typename ove>
 class Vector_Add :public Test_Case
 {
 public:
@@ -40,7 +44,7 @@ public:
 		m_result.resize(size);
 	}
 
-	virtual size_t get_size_in_byte() override { return m_size*sizeof(T); }
+	virtual size_t get_size_in_byte() override { return m_size*sizeof(ove); }
 
 	virtual void run() 
 	{
@@ -64,9 +68,9 @@ public:
 	};
 private:
 	int m_size = 0;
-	std::vector<T> m_v0;
-	std::vector<T> m_v1;
-	std::vector<T> m_result;
+	std::vector<ove> m_v0;
+	std::vector<ove> m_v1;
+	std::vector<ove> m_result;
 };
 
 
