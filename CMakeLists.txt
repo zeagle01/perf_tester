@@ -29,6 +29,8 @@ loop.cu
 
 target_include_directories(perf_test PUBLIC external/spdlog/include)
 
+target_compile_features(perf_test PRIVATE cxx_std_17)
+
 include(FindCUDAToolkit)
 if(CUDAToolkit_FOUND)
 	message("CUDAToolkit_BIN_DIR: ${CUDAToolkit_BIN_DIR}")

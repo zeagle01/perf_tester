@@ -2,16 +2,35 @@
 #pragma once
 
 #include <sstream>
+#include <string>
 
 #include "loop.h"
+
+
+
+template< typename...P>
+struct Extract_Type_String;
+
+template<>
+struct Extract_Type_String<>
+{
+	static inline const std::string value = "";
+};
+
+template<typename H,typename ...P>
+struct Extract_Type_String<H, P...>
+{
+	static inline const std::string  local_value = typeid(H).name();
+	static inline const std::string  value = local_value + Extract_Type_String< P...>::value;
+};
 
 
 template<
 	typename T, 
 	template<typename U> typename Problem, 
 	template<typename U> typename Device, 
-	template<typename U> typename Kernel 
-	//template<typename U, typename De, typename Kernel> typename Updater
+	template<typename U> typename Kernel,
+	typename ... Loop_Param
 	>
 class Composed_Test_Case :public Test_Case
 {
@@ -50,7 +69,7 @@ public:
 	{ 
 
 		std::string ret;
-		auto problem_str = std::string(typeid(Problem).name());
+		auto problem_str = std::string(typeid(Problem<T>).name());
 		std::stringstream ss0;
 		ss0 << problem_str;
 		std::string word;
@@ -58,20 +77,32 @@ public:
 		ss0 >> word;
 		ret = word;
 
-		auto device_str = std::string(typeid(Device<T>).name());
+		auto device_str = std::string(typeid(Device).name());
 		std::stringstream ss1;
 		ss1 << device_str;
 
 		ss1 >> word;
 		ss1 >> word;
-		ret += "_" + word;
+		ret += "_at_" + word;
+
+		const auto typenameaa = typeid(int).name();
+		auto param_str = std::string(Extract_Type_String<Loop_Param...>::value);
+		if (!param_str.empty())
+		{
+			std::stringstream ss2;
+			ss2 << param_str;
+
+			ss2 >> word;
+			ss2 >> word;
+			ret += "_with_" + word;
+		}
 		return ret;
 	};
 private:
 
 	Problem<T> m_problem;
 	Device<T> m_device;
-	Loop<T, Device, Kernel> m_looper;
+	Loop<T, Device, Kernel, Loop_Param...> m_looper;
 
 	int m_size;
 	std::vector<T> m_in;

@@ -66,3 +66,23 @@ struct CUDA
 	}
 };
 
+template<typename T>
+struct CUDA_16 :public CUDA<T> { };
+
+template<typename T>
+struct CUDA_32 :public CUDA<T> { };
+
+template<typename T>
+struct CUDA_64 :public CUDA<T> { };
+
+template<typename T>
+struct CUDA_128 :public CUDA<T> { };
+
+template<typename T>
+struct CUDA_256 :public CUDA<T> { };
+
+template<typename T>
+struct CUDA_512 :public CUDA<T> { };
+
+template<typename T>
+struct CUDA_1024 :public CUDA<T> { };

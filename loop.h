@@ -24,7 +24,8 @@ struct Default_Loop
 template<
 	typename T,
 	template<typename U>typename Device,
-	template<typename U>typename Kernel
+	template<typename U>typename Kernel,
+	typename ... Param
 	>
 struct Loop { };
 
@@ -83,7 +84,7 @@ template<
 	typename T,
 	template<typename U>typename Kernel
 	>
-struct Loop<T, PPL, Kernel> :PPL_Loop<T>
+struct Loop<T, PPL, Kernel> :public PPL_Loop<T>
 {
 	void apply(T* in, T* out, int size, int in_col, int in_row, int out_col, int out_row)
 	{
@@ -91,26 +92,32 @@ struct Loop<T, PPL, Kernel> :PPL_Loop<T>
 		{
 			Kernel<T>::apply(in, out, in_col, in_row, out_col, out_row, i);
 		};
+
 		Concurrency::parallel_for_each(m_iterative_index.begin(), m_iterative_index.end(), fn);
 	}
 };
 
 /// cuda ///////////////
-
-template< typename T, typename Kernel >
+template< typename T, typename Kernel, int thread_per_block>
 void cuda_loop(T* in, T* out, int size, int in_col, int in_row, int out_col, int out_row);
 
+template<int N>
+struct CUDA_1d_Launch_Config
+{
+	static constexpr int thread_per_block = N;
+};
 
 template<
 	typename T,
-	template<typename U>typename Kernel
+	template<typename U>typename Kernel,
+	typename Launch_Config
 	>
-struct Loop<T, CUDA, Kernel> :Default_Loop<T>
+	struct Loop<T, CUDA, Kernel, Launch_Config> :Default_Loop<T>
 {
 	void apply(T* in, T* out, int size, int in_col, int in_row, int out_col, int out_row)
 	{
-		cuda_loop<T, Kernel<T>>(in, out, size, in_col, in_row, out_col, out_row);
+		cuda_loop<T, Kernel<T>, Launch_Config::thread_per_block>(in, out, size, in_col, in_row, out_col, out_row);
 	}
 };
 
-//#include "loop.cu"
+

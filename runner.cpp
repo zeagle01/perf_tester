@@ -24,6 +24,10 @@ void Runner::run(Test_Case* test_case)
 
 
 
+template<typename ...P>
+struct bbb {
+
+};
 
 
 
@@ -47,7 +51,7 @@ void Runner::run()
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel>
+		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel, CUDA_1d_Launch_Config<128>>
 	>());
 
 	m_cases.push_back(std::make_unique<
@@ -63,9 +67,38 @@ void Runner::run()
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<float, Multiply_Add_N_Times, CUDA, Mupltiply_Add_N_Times_Kernel>
+		Composed_Test_Case<float, Multiply_Add_N_Times, CUDA, Mupltiply_Add_N_Times_Kernel, CUDA_1d_Launch_Config<128>>
 	>());
 
+
+	///////////cuda launch config test/////////////
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel, CUDA_1d_Launch_Config<16>>
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel, CUDA_1d_Launch_Config<32>>
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel, CUDA_1d_Launch_Config<64>>
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel, CUDA_1d_Launch_Config<128>>
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel, CUDA_1d_Launch_Config<256>>
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel, CUDA_1d_Launch_Config<512>>
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<float, Vector_Add, CUDA, Add_Kernel, CUDA_1d_Launch_Config<1024>>
+//	>());
 
 	//m_cases.push_back(std::make_unique<Cuda_Random>());
 
