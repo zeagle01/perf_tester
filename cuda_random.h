@@ -17,7 +17,8 @@ public:
 		void init(int size)override ;
 		void run() override;
 		void sync_wait()override ;//for async test case
-		size_t get_size_in_byte() override;
+		size_t get_operation_size_with_respect_to_byte() override;
+		size_t get_problem_size_in_byte() override;
 		bool verify() override ;
 		std::string get_name() override{ return "Cuda_Random"; };
 

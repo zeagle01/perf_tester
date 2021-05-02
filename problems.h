@@ -44,6 +44,11 @@ struct Vector_Add
 		return sizeof(T) * size;
 	}
 
+	size_t get_operation_size(int size)
+	{
+		return get_problem_size(size);
+	}
+
 };
 
 
@@ -93,6 +98,11 @@ struct Multiply_Add_N_Times
 	size_t get_problem_size(int size)
 	{
 		return sizeof(T) * size;
+	}
+
+	size_t get_operation_size(int size)
+	{
+		return get_problem_size(size) * 100;
 	}
 
 };

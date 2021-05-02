@@ -51,7 +51,13 @@ void Cuda_Random::sync_wait()
 	cudaDeviceSynchronize();
 
 }
-size_t Cuda_Random::get_size_in_byte()
+
+size_t Cuda_Random::get_operation_size_with_respect_to_byte()
+{
+	return m_size * sizeof(float);
+}
+
+size_t Cuda_Random::get_problem_size_in_byte()
 {
 	return m_size * sizeof(float);
 }
@@ -59,7 +65,7 @@ size_t Cuda_Random::get_size_in_byte()
 bool Cuda_Random::verify()
 {
 
-	cudaMemcpy(m_host_data.data(), m_device_data, get_size_in_byte(), cudaMemcpyDeviceToHost);
+	cudaMemcpy(m_host_data.data(), m_device_data, get_problem_size_in_byte(), cudaMemcpyDeviceToHost);
 
 	for (int i=1;i<m_host_data.size();i++)
 	{

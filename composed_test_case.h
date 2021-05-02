@@ -54,10 +54,16 @@ public:
 		m_device.sync_wait(); 
 	}
 
-	size_t get_size_in_byte() override 
+	size_t get_operation_size_with_respect_to_byte() override 
+	{
+		return m_problem.get_operation_size(m_size);
+	}
+
+	size_t get_problem_size_in_byte() override 
 	{
 		return m_problem.get_problem_size(m_size);
 	}
+
 	bool verify() override 
 	{ 
 		m_device.dowload(m_out, m_device_out);

@@ -128,7 +128,8 @@ void Runner::run()
 				CE_INFO("{0} duration {1} ", m_cases[i]->get_name(), m_duration);
 			}
 			average_duration /= m_average_num;
-			*os << m_cases[i]->get_size_in_byte() << " ";
+			*os << m_cases[i]->get_problem_size_in_byte() << " ";
+			*os << m_cases[i]->get_operation_size_with_respect_to_byte() << " ";
 			*os << average_duration << " ";
 
 			if (m_verify)
