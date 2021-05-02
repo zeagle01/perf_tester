@@ -42,4 +42,8 @@ DELEARE_CUDA_LOOP_TEMPLATE(float, Mupltiply_Add_N_Times_Kernel, Launch_Config<12
 DELEARE_CUDA_LOOP_TEMPLATE(double, Mupltiply_Add_N_Times_Kernel, Launch_Config<128>, Repeat<100>)
 DELEARE_CUDA_LOOP_TEMPLATE(double, Mupltiply_Add_N_Times_Kernel, Launch_Config<128>, Repeat<1000>)
 
+DELEARE_CUDA_LOOP_TEMPLATE(double, Convolution_Kernel, Launch_Config<128>, Neighbor_Width<1>)
+DELEARE_CUDA_LOOP_TEMPLATE(float, Convolution_Kernel, Launch_Config<128>, Neighbor_Width<1>)
+DELEARE_CUDA_LOOP_TEMPLATE(float, Convolution_Kernel, Launch_Config<128>, Neighbor_Width<2>)
+
 

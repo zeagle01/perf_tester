@@ -38,62 +38,24 @@ void Runner::run()
 		os = std::make_unique<std::ofstream>("result.txt");
 	}
 
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case< Vector_Add<float>, CPU >
-//	>());
-
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case< Vector_Add<float>, OMP >
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case< Vector_Add<float>, PPL >
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case< Vector_Add<float>, CUDA< Launch_Config<128> >  >
-//	>());
-//
-
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Multiply_Add_N_Times<float, Repeat<10>>, CPU >
+		Composed_Test_Case< Convolution<float,Neighbor_Width<1>>, CPU >
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Multiply_Add_N_Times<double, Repeat<10>>, CPU >
+		Composed_Test_Case< Multiply_Add_N_Times<float,Repeat<100>>, CPU >
+	>());
+
+
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case< Convolution<float,Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Multiply_Add_N_Times<float, Repeat<100>>, CPU >
+		Composed_Test_Case< Multiply_Add_N_Times<float,Repeat<100>>, CUDA<Launch_Config<128>> >
 	>());
 
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Multiply_Add_N_Times<double, Repeat<100>>, CPU >
-	>());
 
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case< Multiply_Add_N_Times<float, Repeat<100>>, OMP>
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case< Multiply_Add_N_Times<float, Repeat<100>>, PPL>
-//	>());
-
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case< Multiply_Add_N_Times<float, Repeat<10>>, CUDA<Launch_Config<128>> >
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case< Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
-//	>());
-
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Multiply_Add_N_Times<float, Repeat<1000>>, CUDA<Launch_Config<128>> >
-	>());
-
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Multiply_Add_N_Times<double, Repeat<1000>>, CUDA<Launch_Config<128>> >
-	>());
 
 
 //	///////////cuda launch config test/////////////

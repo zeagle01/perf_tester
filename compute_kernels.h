@@ -49,3 +49,20 @@ struct Mupltiply_Add_N_Times_Kernel
 };
 
 
+
+////////////////////////////
+
+template<typename T,typename neighbor_width>
+struct Convolution_Kernel
+{
+	static KERNEL_MODIFIER void apply(T* in, T* out, int in_col, int in_row, int out_col, int out_row, int i)
+	{
+		T cov = 0;
+		for (int j = -neighbor_width::value; j <=neighbor_width::value; j++)
+		{
+			cov += in[neighbor_width::value + i + j];
+		}
+		cov /= (2 * neighbor_width::value + 1);
+		out[i] = cov;
+	}
+};
