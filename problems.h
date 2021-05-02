@@ -1,10 +1,17 @@
 
 #pragma once
+#include "compute_kernels.h"
+#include "type_list.h"
+#include <vector>
 
 
 template<typename T>
-struct Vector_Add
+struct Vector_Add 
 {
+	using param_list = type_list<>;
+	using Kernel = Add_Kernel<T>;
+	using Data_Type = T;
+
 	void init(std::vector<T>& in, std::vector<T>& out, int& m_in_col, int& m_in_row, int& m_out_col, int& m_out_row, int size)
 	{
 		m_in_row = 2;
@@ -56,12 +63,22 @@ struct Vector_Add
 
 
 
+template<int N>
+struct Repeat 
+{
+	static constexpr int value = N;
+};
 
 
 
-template<typename T >
+template<typename T, typename repeat_count>
 struct Multiply_Add_N_Times
 {
+
+	using param_list = type_list<repeat_count>;
+	using Kernel = Mupltiply_Add_N_Times_Kernel<T, repeat_count>;
+	using Data_Type = T;
+
 	void init(std::vector<T>& in, std::vector<T>& out, int& m_in_col, int& m_in_row, int& m_out_col, int& m_out_row, int size)
 	{
 		m_in_row = 2;
@@ -102,7 +119,7 @@ struct Multiply_Add_N_Times
 
 	size_t get_operation_size(int size)
 	{
-		return get_problem_size(size) * 100;
+		return get_problem_size(size) * repeat_count::value;
 	}
 
 };

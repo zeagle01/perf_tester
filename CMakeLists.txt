@@ -24,6 +24,8 @@ problems.h
 compute_kernels.h
 loop.h
 loop.cu
+type_list.h
+types_helper.h
 )
 
 

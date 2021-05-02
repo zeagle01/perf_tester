@@ -3,7 +3,6 @@
 
 
 #include "cuda_runtime.h"
-#include "devices.h"
 
 #ifdef __CUDACC__
 #define KERNEL_MODIFIER __device__ inline
@@ -26,12 +25,10 @@ struct Add_Kernel
 };
 
 
+
 ////////////////////////////
 
-#define  MUPLTIPLY_ADD_REPEAT 100
-
-
-template<typename T>
+template<typename T,typename repeat_count>
 struct Mupltiply_Add_N_Times_Kernel
 {
 
@@ -42,7 +39,7 @@ struct Mupltiply_Add_N_Times_Kernel
 		T out_i = out[i];
 		T in0_i = in0[i];
 		T in1_i = in1[i];
-		for (int j = 0; j < MUPLTIPLY_ADD_REPEAT; j++)
+		for (int j = 0; j < repeat_count::value; j++)
 		{
 			out_i = in0_i * out_i + in1_i;
 

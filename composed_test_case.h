@@ -3,37 +3,21 @@
 
 #include <sstream>
 #include <string>
+#include <regex>
 
 #include "loop.h"
+#include "types_helper.h"
 
 
 
-template< typename...P>
-struct Extract_Type_String;
-
-template<>
-struct Extract_Type_String<>
-{
-	static inline const std::string value = "";
-};
-
-template<typename H,typename ...P>
-struct Extract_Type_String<H, P...>
-{
-	static inline const std::string  local_value = typeid(H).name();
-	static inline const std::string  value = local_value + Extract_Type_String< P...>::value;
-};
 
 
-template<
-	typename T, 
-	template<typename U> typename Problem, 
-	template<typename U> typename Device, 
-	template<typename U> typename Kernel,
-	typename ... Loop_Param
-	>
+
+
+template< typename Problem, typename Device >
 class Composed_Test_Case :public Test_Case
 {
+
 public:
 	void init(int size) override 
 	{
@@ -44,7 +28,6 @@ public:
 	};
 	void run() override 
 	{ 
-		//m_updater.apply(m_device_in, m_device_out, m_size, m_in_col, m_in_row, m_out_col, m_out_row);
 		m_looper.apply(m_device_in, m_device_out, m_size, m_in_col, m_in_row, m_out_col, m_out_row);
 	};
 
@@ -74,42 +57,59 @@ public:
 	std::string get_name() override 
 	{ 
 
-		std::string ret;
-		auto problem_str = std::string(typeid(Problem<T>).name());
-		std::stringstream ss0;
-		ss0 << problem_str;
-		std::string word;
-		ss0 >> word;
-		ss0 >> word;
-		ret = word;
+		auto problem_type_str = std::string(typeid(Problem).name());
+		auto problem_str = strip_type_string(problem_type_str, "\\s+|<|>");
 
-		auto device_str = std::string(typeid(Device).name());
-		std::stringstream ss1;
-		ss1 << device_str;
+		auto problem_param_type_str = Extract_Name_Of_Type_List<Problem::param_list>::value;
+		auto problem_param_str = strip_type_string(problem_param_type_str, "\\s+");
 
-		ss1 >> word;
-		ss1 >> word;
-		ret += "_at_" + word;
+		auto device_type_str = std::string(typeid(Device).name());
+		auto device_str = strip_type_string(device_type_str, "\\s+|<|>");
 
-		const auto typenameaa = typeid(int).name();
-		auto param_str = std::string(Extract_Type_String<Loop_Param...>::value);
-		if (!param_str.empty())
-		{
-			std::stringstream ss2;
-			ss2 << param_str;
+		auto device_param_type_str = Extract_Name_Of_Type_List<Device::param_list>::value;
+		auto device_param_str = strip_type_string(device_param_type_str, "\\s+");
 
-			ss2 >> word;
-			ss2 >> word;
-			ret += "_with_" + word;
-		}
+		auto data_type_str = std::string(typeid(T).name());
+
+		std::string ret = problem_str + "<" + data_type_str + "," + problem_param_str + ">_" + device_str + "<" + device_param_str + ">";
 		return ret;
 	};
+
+
+private:
+	std::string strip_type_string(const std::string& type_string,std::string delimeter)
+	{
+		std::string ret;
+		if (type_string.empty())
+		{
+			return ret;
+		}
+
+		std::regex rgx(delimeter);
+		std::sregex_token_iterator it(type_string.begin(), type_string.end(), rgx, -1);
+		std::sregex_token_iterator end;
+		for (; it != end; ++it)
+		{
+			std::string cc = std::string(*it);
+			if (cc != "struct")
+			{
+				ret.append(cc);
+				return ret;
+			}
+		}
+		return ret;
+	}
 private:
 
-	Problem<T> m_problem;
-	Device<T> m_device;
-	Loop<T, Device, Kernel, Loop_Param...> m_looper;
+	Problem m_problem;
+	using T = typename Problem::Data_Type;
 
+	using Device_T = typename Device::template type<T>;
+	Device_T m_device;
+
+	using Problem_Kernel = typename Problem::Kernel;
+	typename Device_T::template Looper<Problem_Kernel> m_looper;
+	
 	int m_size;
 	std::vector<T> m_in;
 	std::vector<T> m_out;
