@@ -7,68 +7,61 @@
 
 template<
 	typename T,
-	template<typename U, typename ...P >typename Device,
+	template<typename U, template<typename> typename Kernel_Param, typename ...P >typename Device,
 	typename Kernel,
 	typename ... Device_Param
 	>
 struct Loop ;
 
-template<typename T>
+template<typename T, template<typename> typename Kernel_Param>
 struct Empty_Device
 {
 	using Data_Type = T;
-	void dowload(std::vector<T>& host_out, T* device_out) { }
-	void upload(T*& m_device_in, T*& m_device_out, const std::vector<T>& m_in, const std::vector<T>& m_out) { }
+	void dowload(Kernel_Param<T>& host_param, const Kernel_Param<T>& device_param) { }
+	void upload(Kernel_Param<T>& device_param, const Kernel_Param<T>& host_param) { }
 	void sync_wait() {}
-	void free_device_source(T* device_out, T* device_in) {}
+	void free_device_source(Kernel_Param<T>& device_param) {}
 };
 
 
 template< 
 	typename T,
-	template<typename U, typename ...P> typename Device,
+	template<typename U, template<typename> typename Kernal_Param, typename ...P> typename Device,
 	typename ...Device_Param
 >
 struct Loop_Locator
 {
-	template<typename Kernel>
+	template<typename Kernel >
 	using Looper = Loop<T, Device, Kernel, Device_Param...>;
 };
 
-template<typename T>
-struct CPU_Base :Empty_Device<T>
+template<typename T, template<typename> typename Kernel_Param>
+struct CPU_Base :Empty_Device<T, Kernel_Param>
 {
-	void upload(T*& m_device_in, T*& m_device_out, const std::vector<T>& m_in, const std::vector<T>& m_out)
+	void upload(Kernel_Param<T>& device_param, const Kernel_Param<T>& host_param) 
 	{
-		m_device_in = const_cast<T*>(&m_in[0]);
-		m_device_out = const_cast<T*>(&m_out[0]);
+		device_param = host_param;
 	}
 };
 
 /// CPU
-template<typename T>
-struct CPU_Imp :CPU_Base<T>, Loop_Locator<T, CPU_Imp>
+template<typename T, template<typename> typename Kernel_Param>
+struct CPU_Imp :CPU_Base<T, Kernel_Param>, Loop_Locator<T, CPU_Imp>
 {
-
-	void upload(T*& m_device_in, T*& m_device_out, const std::vector<T>& m_in, const std::vector<T>& m_out)
-	{
-		m_device_in = const_cast<T*>(&m_in[0]);
-		m_device_out = const_cast<T*>(&m_out[0]);
-	}
 };
 
 struct CPU 
 { 
 	using param_list = type_list<>;
 
-	template <typename T>
-	using type = CPU_Imp<T >;
+	template <typename T, template<typename> typename Kernel_Param>
+	using type = CPU_Imp<T, Kernel_Param >;
 };
 
 
 /// OMP
-template<typename T>
-struct OMP_Imp :CPU_Base<T>, Loop_Locator<T, OMP_Imp>
+template<typename T, template<typename> typename Kernel_Param>
+struct OMP_Imp :CPU_Base<T, Kernel_Param>, Loop_Locator<T, OMP_Imp>
 {
 	void sync_wait()
 	{
@@ -80,19 +73,19 @@ struct OMP_Imp :CPU_Base<T>, Loop_Locator<T, OMP_Imp>
 struct OMP 
 { 
 	using param_list = type_list<>;
-	template <typename T>
-	using type = OMP_Imp<T >;
+	template <typename T, template<typename> typename Kernel_Param>
+	using type = OMP_Imp<T, Kernel_Param >;
 };
 
 //PPL
-template<typename T>
-struct PPL_Imp : CPU_Base<T>, Loop_Locator<T, PPL_Imp> { };
+template<typename T, template<typename> typename Kernel_Param>
+struct PPL_Imp : CPU_Base<T, Kernel_Param>, Loop_Locator<T, PPL_Imp> { };
 
 struct PPL 
 { 
 	using param_list = type_list<>;
-	template <typename T>
-	using type = PPL_Imp<T >;
+	template <typename T,template<typename> typename Kernel_Param>
+	using type = PPL_Imp<T, Kernel_Param>;
 };
 
 
@@ -103,34 +96,38 @@ struct Launch_Config
 	static constexpr int thread_per_block = N;
 };
 
-template<typename T, typename Launch_Config>
+template<typename T, template<typename> typename Kernel_Param, typename Launch_Config>
 struct CUDA_Imp :Loop_Locator<T, CUDA_Imp, Launch_Config>
 {
-	void dowload(std::vector<T>& host_out, T* device_out)
-	{
 
-		cudaMemcpy(host_out.data(), device_out, sizeof(T) * host_out.size(), cudaMemcpyDeviceToHost);
+	void dowload(Kernel_Param<T>& host_param, const Kernel_Param<T>& device_param) 
+	{ 
+		auto out_size = sizeof(T) * device_param.out_row * device_param.out_col;
+		cudaMemcpy(host_param.out_data, device_param.out_data, out_size, cudaMemcpyDeviceToHost);
+	}
+
+	void upload(Kernel_Param<T>& device_param, const Kernel_Param<T>& host_param) 
+	{
+		auto in_size = sizeof(T) * device_param.in_row * device_param.in_col;
+		auto out_size = sizeof(T) * device_param.out_row * device_param.out_col;
+		cudaMalloc(&device_param.in_data, in_size);
+		cudaMalloc(&device_param.out_data, out_size);
+
+		cudaMemcpy(device_param.in_data, host_param.in_data, in_size, cudaMemcpyHostToDevice);
+		cudaMemcpy(device_param.out_data, host_param.out_data, out_size, cudaMemcpyHostToDevice);
 	}
 
 
-	void upload(T*& device_in, T*& device_out, const std::vector<T>& in, const std::vector<T>& out)
-	{
-
-		cudaMalloc(&device_in, sizeof(T) * in.size());
-		cudaMalloc(&device_out, sizeof(T) * out.size());
-
-		cudaMemcpy(device_out, out.data(), sizeof(T) * out.size(), cudaMemcpyHostToDevice);
-		cudaMemcpy(device_in, in.data(), sizeof(T) * in.size(), cudaMemcpyHostToDevice);
-	}
 	void sync_wait()
 	{
 		cudaDeviceSynchronize();
 	}
 
-	void free_device_source(T* device_out, T* device_in)
+
+	void free_device_source(Kernel_Param<T>& device_param) 
 	{
-		cudaFree(device_out);
-		cudaFree(device_in);
+		cudaFree(device_param.in_data);
+		cudaFree(device_param.out_data);
 	}
 };
 
@@ -138,7 +135,7 @@ template< typename...P>
 struct CUDA 
 {
 	using param_list = type_list<P...>;
-	template <typename T>
-	using type = CUDA_Imp<T, P... >;
+	template <typename T,template<typename> typename Kernel_Param>
+	using type = CUDA_Imp<T, Kernel_Param, P... >;
 };
 

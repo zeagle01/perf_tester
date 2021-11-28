@@ -22,13 +22,13 @@ public:
 	void init(int size) override 
 	{
 		m_size = size;
-		m_problem.init(m_in, m_out, m_in_col, m_in_row, m_out_col, m_out_row, size);
-		m_device.upload(m_device_in, m_device_out, m_in, m_out);
-		m_looper.init_extra_data(m_in, m_in_col, m_in_row, m_out_col, m_out_row);
+		m_problem.init(m_kernel_parameter_host, size);
+		m_device.upload(m_kernel_parameter_device, m_kernel_parameter_host);
+		m_looper.before_loop(m_kernel_parameter_device, m_kernel_parameter_host, size);
 	};
 	void run() override 
 	{ 
-		m_looper.apply(m_device_in, m_device_out, m_size, m_in_col, m_in_row, m_out_col, m_out_row);
+		m_looper.apply(m_kernel_parameter_device, m_size);
 	};
 
 	//for async test case
@@ -49,9 +49,9 @@ public:
 
 	bool verify() override 
 	{ 
-		m_device.dowload(m_out, m_device_out);
-		auto ret = m_problem.verify(m_in, m_out);
-		m_device.free_device_source(m_device_out, m_device_in);
+		m_device.dowload(m_kernel_parameter_host, m_kernel_parameter_device);
+		auto ret = m_problem.verify(m_kernel_parameter_host);
+		m_device.free_device_source(m_kernel_parameter_device);
 		return ret;
 	};
 	std::string get_name() override 
@@ -103,18 +103,17 @@ private:
 
 	Problem m_problem;
 	using T = typename Problem::Data_Type;
+	using Kernel_Type = typename  Problem::Kernel;
+	template<typename U>
+	using Kernel_Parameter_Type = typename  Kernel_Type::template Parameter_Type<U>;
 
-	using Device_T = typename Device::template type<T>;
+	using Device_T = typename Device::template type<T, Kernel_Parameter_Type>;
 	Device_T m_device;
 
-	using Problem_Kernel = typename Problem::Kernel;
-	typename Device_T::template Looper<Problem_Kernel> m_looper;
+	typename Device_T::template Looper< Kernel_Type > m_looper;
 	
 	int m_size;
-	std::vector<T> m_in;
-	std::vector<T> m_out;
-	int m_in_col, m_in_row, m_out_col, m_out_row;
 
-	T* m_device_in;
-	T* m_device_out;
+	Kernel_Parameter_Type<T> m_kernel_parameter_device;
+	Kernel_Parameter_Type<T> m_kernel_parameter_host;
 };

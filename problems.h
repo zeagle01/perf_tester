@@ -5,6 +5,13 @@
 #include <vector>
 
 
+
+
+
+
+
+
+
 template<typename T>
 struct Vector_Add 
 {
@@ -12,31 +19,37 @@ struct Vector_Add
 	using Kernel = Add_Kernel<T>;
 	using Data_Type = T;
 
-	void init(std::vector<T>& in, std::vector<T>& out, int& m_in_col, int& m_in_row, int& m_out_col, int& m_out_row, int size)
+	void init(Matrix_In_Matrix_Out<T>& param, int size)
 	{
-		m_in_row = 2;
-		m_in_col = size;
-		m_out_col = size;
-		m_out_row = 1;
+		param.in_row = 2;
+		param.in_col = size;
 
-		in.resize(size * 2);
-		out.resize(size);
-		T* in0 = &in[0];
-		T* in1 = &in[size];
+		param.out_row = 1;
+		param.out_col = size;
+
+		m_in.resize(size * 2);
+		m_out.resize(size);
+		param.in_data = m_in.data();
+		param.out_data = m_out.data();
+
+		T* in0 = &param.in_data[0];
+		T* in1 = &param.in_data[size];
 		for (int i = 0; i < size; i++)
 		{
 			in0[i] = 1;
 			in1[i] = 1;
-			out[i] = 0;
+			param.out_data[i] = 0;
 		}
 	}
-	bool verify(const std::vector<T>& in, const std::vector<T>& out)
+
+	bool verify(const Matrix_In_Matrix_Out<T>& param)
 	{
-		int n = out.size();
+		int n = param.out_row * param.out_col;
+		T* out = param.out_data;
+		const T* in0 = &param.in_data[0];
+		const T* in1 = &param.in_data[n];
 		for (int i = 0; i < n; i++)
 		{
-			const T* in0 = &in[0];
-			const T* in1 = &in[n];
 			if (out[i] != in0[i] + in1[i])
 			{
 				return false;
@@ -44,6 +57,7 @@ struct Vector_Add
 			}
 		}
 		return true;
+
 	}
 
 	size_t get_problem_size(int size)
@@ -55,6 +69,10 @@ struct Vector_Add
 	{
 		return get_problem_size(size);
 	}
+
+private:
+	std::vector<T> m_in;
+	std::vector<T> m_out;
 
 };
 
@@ -79,28 +97,34 @@ struct Multiply_Add_N_Times
 	using Kernel = Mupltiply_Add_N_Times_Kernel<T, repeat_count>;
 	using Data_Type = T;
 
-	void init(std::vector<T>& in, std::vector<T>& out, int& m_in_col, int& m_in_row, int& m_out_col, int& m_out_row, int size)
+	void init(Matrix_In_Matrix_Out<T>& param, int size)
 	{
-		m_in_row = 2;
-		m_in_col = size;
-		m_out_col = size;
-		m_out_row = 1;
+		param.in_row = 2;
+		param.in_col = size;
 
-		in.resize(size * 2);
-		out.resize(size);
-		T* in0 = &in[0];
-		T* in1 = &in[size];
+		param.out_row = 1;
+		param.out_col = size;
+
+		m_in.resize(size * 2);
+		m_out.resize(size);
+		param.in_data = m_in.data();
+		param.out_data = m_out.data();
+
+		T* in0 = &param.in_data[0];
+		T* in1 = &param.in_data[size];
 		for (int i = 0; i < size; i++)
 		{
-			in0[i] = 0.9;
+			in0[i] = 1;
 			in1[i] = 1;
-			out[i] = 0;
+			param.out_data[i] = 0;
 		}
 	}
 
-	bool verify(const std::vector<T>& in, const std::vector<T>& out)
+
+	bool verify(const Matrix_In_Matrix_Out<T>& param)
 	{
-		int n = out.size();
+		int n = param.out_row * param.out_col;
+		T* out = param.out_data;
 		for (int i = 0; i < n; i++)
 		{
 			if (std::abs(out[i] - 10.) > 1e-3)
@@ -110,6 +134,7 @@ struct Multiply_Add_N_Times
 			}
 		}
 		return true;
+
 	}
 
 	size_t get_problem_size(int size)
@@ -122,6 +147,9 @@ struct Multiply_Add_N_Times
 		return get_problem_size(size) * repeat_count::value;
 	}
 
+private:
+	std::vector<T> m_in;
+	std::vector<T> m_out;
 };
 
 
@@ -140,20 +168,30 @@ struct Convolution
 	using Kernel = Convolution_Kernel<T, neighbor_width>;
 	using Data_Type = T;
 
-	void init(std::vector<T>& in, std::vector<T>& out, int& m_in_col, int& m_in_row, int& m_out_col, int& m_out_row, int size)
+	void init(Matrix_In_Matrix_Out<T>& param, int size)
 	{
-		m_in_row = 1;
-		m_in_col = size + 2 * neighbor_width::value;
-		m_out_col = size;
-		m_out_row = 1;
+		param.in_row = 1;
+		param.in_col = size + 2 * neighbor_width::value;
 
-		in.resize(m_in_col, 1);
-		out.resize(size, 0);
+		param.out_row = 1;
+		param.out_col = size;
+
+		m_in.resize(param.in_col);
+		m_out.resize(size);
+		param.in_data = m_in.data();
+		param.out_data = m_out.data();
+
+		for (int i = 0; i < size; i++)
+		{
+			param.in_data[i] = 1;
+			param.out_data[i] = 0;
+		}
 	}
 
-	bool verify(const std::vector<T>& in, const std::vector<T>& out)
+	bool verify(const Matrix_In_Matrix_Out<T>& param)
 	{
-		int n = out.size();
+		int n = param.out_row * param.out_col;
+		T* out = param.out_data;
 		for (int i = 0; i < n; i++)
 		{
 			if (std::abs(out[i] - 1.) > 1e-3)
@@ -163,6 +201,7 @@ struct Convolution
 			}
 		}
 		return true;
+
 	}
 
 	size_t get_problem_size(int size)
@@ -174,6 +213,10 @@ struct Convolution
 	{
 		return get_problem_size(size) * neighbor_width::value * 2;
 	}
+
+private:
+	std::vector<T> m_in;
+	std::vector<T> m_out;
 
 };
 

@@ -23,14 +23,6 @@ void Runner::run(Test_Case* test_case)
 
 
 
-
-template<typename ...P>
-struct bbb {
-
-};
-
-
-
 void Runner::run()
 {
 	if (!os)
@@ -39,20 +31,20 @@ void Runner::run()
 	}
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Convolution<float,Neighbor_Width<1>>, CPU >
+		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Multiply_Add_N_Times<float,Repeat<100>>, CPU >
+		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
 	>());
 
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Convolution<float,Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
+		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case< Multiply_Add_N_Times<float,Repeat<100>>, CUDA<Launch_Config<128>> >
+		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
 	>());
 
 
