@@ -115,3 +115,66 @@ struct Convolution_Kernel :With_Parameter_Type<Matrix_In_Matrix_Out>
 	}
 
 };
+
+
+
+
+
+///////////// CSR Matrix vector multiply
+template<typename T>
+struct CSR_Matrix_And_Vector
+{
+	Device_Pointer<T> A;
+	Device_Pointer<int> I;
+	Device_Pointer<int> J;
+	Device_Pointer<float> b;
+
+	Device_Pointer<T> x;
+
+};
+
+template<typename T>
+struct Matrix_Vector_Multiplication_CSR :With_Parameter_Type<CSR_Matrix_And_Vector>
+{
+
+	static KERNEL_MODIFIER
+		void apply(Matrix_In_Matrix_Out<T>& param, int i)
+	{
+		for (int k = param.I[i]; k <param. I[i + 1]; k++)
+		{
+			int j = param.J[k];
+			param.x[i] += param.A[k] * param.b[j];
+		}
+	}
+
+};
+
+///////////// CSR Matrix vector multiply
+template<typename T>
+struct ELL_Matrix_And_Vector
+{
+	Device_Pointer<T> A;
+	Device_Pointer<int> J;
+	int col;
+
+	Device_Pointer<T> b;
+
+	Device_Pointer<T> x;
+
+};
+
+template<typename T>
+struct Matrix_Vector_Multiplication_ELL :With_Parameter_Type<ELL_Matrix_And_Vector>
+{
+
+	static KERNEL_MODIFIER
+		void apply(ELL_Matrix_And_Vector<T>& param, int i)
+	{
+		//int col
+		//for (int k = 0; k < param.J[i]; k++)
+		//{
+		//	param.A[]
+		//}
+	}
+
+};
