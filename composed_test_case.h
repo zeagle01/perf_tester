@@ -10,10 +10,6 @@
 
 
 
-
-
-
-
 template< typename Problem, typename Device >
 class Composed_Test_Case :public Test_Case
 {

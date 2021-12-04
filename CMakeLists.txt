@@ -26,6 +26,11 @@ loop.h
 loop.cu
 type_list.h
 types_helper.h
+struct_helper.h
+class_reflection.h
+macro_loop.h
+cuda_device.h
+launch_config.h
 )
 
 

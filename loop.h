@@ -2,6 +2,7 @@
 #pragma once
 
 #include "devices.h"
+#include "cuda_device.h"
 #include "ppl.h"
 
 
@@ -9,11 +10,8 @@
 template<typename T, template <typename> typename Kernel_Param>
 struct Default_Loop
 {
-
 	void before_loop(const Kernel_Param<T>& kernel_param_host, const Kernel_Param<T>& kernel_param_device, int size) { }
-
 	void apply(Kernel_Param<T>& kernel_param_device, int size) { }
-
 };
 
 
@@ -88,8 +86,6 @@ struct Loop<T,  PPL_Imp, Kernel>
 };
 
 /// cuda ///////////////
-template< typename T, typename Kernel ,typename Launch_Config>
-void cuda_loop(T* in, T* out, int size, int in_col, int in_row, int out_col, int out_row);
 
 template< typename T, typename Kernel, typename Launch_Config>
 void cuda_loop(typename Kernel::template Parameter_Type<T>& kernel_param, int size);

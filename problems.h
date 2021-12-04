@@ -5,13 +5,6 @@
 #include <vector>
 
 
-
-
-
-
-
-
-
 template<typename T>
 struct Vector_Add 
 {
@@ -29,23 +22,24 @@ struct Vector_Add
 
 		m_in.resize(size * 2);
 		m_out.resize(size);
-		param.in_data = m_in.data();
-		param.out_data = m_out.data();
+		param.in_data= m_in;
+		param.out_data = m_out;
 
-		T* in0 = &param.in_data[0];
-		T* in1 = &param.in_data[size];
+		T* in0 = &param.in_data.data[0];
+		T* in1 = &param.in_data.data[size];
 		for (int i = 0; i < size; i++)
 		{
 			in0[i] = 1;
 			in1[i] = 1;
-			param.out_data[i] = 0;
+			param.out_data.data[i] = 0;
 		}
+
 	}
 
 	bool verify(const Matrix_In_Matrix_Out<T>& param)
 	{
 		int n = param.out_row * param.out_col;
-		T* out = param.out_data;
+		const T* out = param.out_data;
 		const T* in0 = &param.in_data[0];
 		const T* in1 = &param.in_data[n];
 		for (int i = 0; i < n; i++)
@@ -107,14 +101,14 @@ struct Multiply_Add_N_Times
 
 		m_in.resize(size * 2);
 		m_out.resize(size);
-		param.in_data = m_in.data();
-		param.out_data = m_out.data();
+		param.in_data = m_in;
+		param.out_data = m_out;
 
 		T* in0 = &param.in_data[0];
 		T* in1 = &param.in_data[size];
 		for (int i = 0; i < size; i++)
 		{
-			in0[i] = 1;
+			in0[i] = 0.9;
 			in1[i] = 1;
 			param.out_data[i] = 0;
 		}
@@ -124,7 +118,7 @@ struct Multiply_Add_N_Times
 	bool verify(const Matrix_In_Matrix_Out<T>& param)
 	{
 		int n = param.out_row * param.out_col;
-		T* out = param.out_data;
+		const T* out = param.out_data;
 		for (int i = 0; i < n; i++)
 		{
 			if (std::abs(out[i] - 10.) > 1e-3)
@@ -178,20 +172,20 @@ struct Convolution
 
 		m_in.resize(param.in_col);
 		m_out.resize(size);
-		param.in_data = m_in.data();
-		param.out_data = m_out.data();
 
-		for (int i = 0; i < size; i++)
-		{
-			param.in_data[i] = 1;
-			param.out_data[i] = 0;
-		}
+		m_in.assign(m_in.size(), 1);
+		m_out.assign(m_out.size(), 0);
+
+		param.in_data = m_in;
+		param.out_data = m_out;
+
+
 	}
 
 	bool verify(const Matrix_In_Matrix_Out<T>& param)
 	{
 		int n = param.out_row * param.out_col;
-		T* out = param.out_data;
+		const T* out = param.out_data;
 		for (int i = 0; i < n; i++)
 		{
 			if (std::abs(out[i] - 1.) > 1e-3)

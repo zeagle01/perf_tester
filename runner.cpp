@@ -9,6 +9,7 @@
 #include "devices.h"
 #include "problems.h"
 #include "compute_kernels.h"
+#include "launch_config.h"
 
 
 void Runner::run(Test_Case* test_case)
@@ -31,6 +32,10 @@ void Runner::run()
 	}
 
 	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<   Vector_Add<float >, CPU >
+	>());
+
+	m_cases.push_back(std::make_unique<
 		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
 	>());
 
@@ -38,6 +43,9 @@ void Runner::run()
 		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
 	>());
 
+	m_cases.push_back(std::make_unique<
+		Composed_Test_Case<   Vector_Add<float >, CUDA<Launch_Config<128>> >
+	>());
 
 	m_cases.push_back(std::make_unique<
 		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
@@ -46,6 +54,7 @@ void Runner::run()
 	m_cases.push_back(std::make_unique<
 		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
 	>());
+
 
 
 
