@@ -12,7 +12,7 @@ struct Upload_Cuda_Data
 	template<typename T >
 	static void apply(T& p_out, const T& p_in)
 	{
-		p_out.count = p_in.count;
+		p_out = p_in;
 		auto size = p_out.count * sizeof(T::data_type);
 		cudaMalloc(&p_out.data, p_out.count * sizeof(T::data_type));
 		cudaMemcpy(p_out.data, p_in.data, size, cudaMemcpyHostToDevice);

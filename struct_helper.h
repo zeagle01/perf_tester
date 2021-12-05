@@ -36,7 +36,10 @@ struct Dev_Ptr_Only
 	{
 		using element_type = std::remove_const_t<std::remove_reference_t<decltype(std::get<I>(tp0))>>;
 
-		if constexpr (Is_Same_template<element_type, Device_Pointer<void>>::value)
+		if constexpr (
+			Is_Same_template<element_type, Device_Pointer<void>>::value
+			|| Is_Same_template<element_type, Device_Pointer_2<void>>::value
+			)
 		{
 			F::apply(std::get<I>(tp0), std::get<I>(tps)...);
 		}
@@ -51,7 +54,10 @@ struct Value_Only
 	{
 		using element_type = std::remove_const_t<std::remove_reference_t<decltype(std::get<I>(tp0))>>;
 
-		if constexpr (!Is_Same_template<element_type, Device_Pointer<void>>::value)
+		if constexpr (
+			!  (Is_Same_template<element_type, Device_Pointer<void>>::value
+			|| Is_Same_template<element_type, Device_Pointer_2<void>>::value)
+			)
 		{
 			F::apply(std::get<I>(tp0), std::get<I>(tps)...);
 		}

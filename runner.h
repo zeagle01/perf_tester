@@ -24,10 +24,10 @@ private:
 	long m_duration;
 
 	int m_average_num = 1;
-	int m_max_size_in_log2 = 25;
-	int m_min_size_in_log2 = 8;
-//	int m_max_size_in_log2 = 5;
-//	int m_min_size_in_log2 = 1;
+//	int m_max_size_in_log2 = 25;
+//	int m_min_size_in_log2 = 8;
+	int m_max_size_in_log2 = 5;
+	int m_min_size_in_log2 = 1;
 
 	bool m_verify = true;
 

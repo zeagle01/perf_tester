@@ -32,6 +32,19 @@ struct Device_Pointer
 	}
 };
 
+template<typename T>
+struct Device_Pointer_2
+{
+	T* data;
+	int col;
+	int count;
+	using data_type = T;
+
+	KERNEL_MODIFIER T& operator()(int ri, int ci) { return data[ri * col + ci]; }
+	KERNEL_MODIFIER const T& operator()(int ri, int ci)const { return data[ri * col + ci]; }
+
+};
+
 
 template<typename T>
 struct Matrix_In_Matrix_Out
@@ -138,7 +151,7 @@ struct Matrix_Vector_Multiplication_CSR :With_Parameter_Type<CSR_Matrix_And_Vect
 {
 
 	static KERNEL_MODIFIER
-		void apply(Matrix_In_Matrix_Out<T>& param, int i)
+		void apply(CSR_Matrix_And_Vector<T>& param, int i)
 	{
 		for (int k = param.I[i]; k <param. I[i + 1]; k++)
 		{
@@ -153,13 +166,14 @@ struct Matrix_Vector_Multiplication_CSR :With_Parameter_Type<CSR_Matrix_And_Vect
 template<typename T>
 struct ELL_Matrix_And_Vector
 {
-	Device_Pointer<T> A;
-	Device_Pointer<int> J;
+	Device_Pointer_2<T> A;
+	Device_Pointer_2<int> J;
 	int col;
 
 	Device_Pointer<T> b;
 
 	Device_Pointer<T> x;
+	Device_Pointer<T> x0;
 
 };
 
@@ -170,11 +184,13 @@ struct Matrix_Vector_Multiplication_ELL :With_Parameter_Type<ELL_Matrix_And_Vect
 	static KERNEL_MODIFIER
 		void apply(ELL_Matrix_And_Vector<T>& param, int i)
 	{
-		//int col
-		//for (int k = 0; k < param.J[i]; k++)
-		//{
-		//	param.A[]
-		//}
+		T Ax = T(0);
+		for (int k = 0; k < param.J(0, i); k++)
+		{
+			int j = param.J(k + 1, i);
+			Ax += param.A(k, i) * param.x0[j];
+		}
+		param.x[i] += (param.b[i] - Ax) / param.A(0, i);
 	}
 
 };

@@ -31,28 +31,36 @@ void Runner::run()
 		os = std::make_unique<std::ofstream>("result.txt");
 	}
 
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<   Vector_Add<float >, CPU >
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<   Vector_Add<float >, CUDA<Launch_Config<128>> >
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
+//	>());
+//
+//	m_cases.push_back(std::make_unique<
+//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
+//	>());
+
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<   Vector_Add<float >, CPU >
+		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CUDA<Launch_Config<128>> >
 	>());
 
 	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
-	>());
-
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
-	>());
-
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<   Vector_Add<float >, CUDA<Launch_Config<128>> >
-	>());
-
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
-	>());
-
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
+		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CPU >
 	>());
 
 

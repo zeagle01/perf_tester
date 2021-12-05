@@ -50,5 +50,7 @@ DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Convolution_Kernel,  Launch_Config<128>, Ne
 DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Convolution_Kernel,  Launch_Config<128>, Neighbor_Width<2>)
 
 
+DELEARE_CUDA_LOOP_TEMPLATE_1(float, Matrix_Vector_Multiplication_ELL,  Launch_Config<128> )
+DELEARE_CUDA_LOOP_TEMPLATE_1(float, Matrix_Vector_Multiplication_CSR,  Launch_Config<128> )
 
 
