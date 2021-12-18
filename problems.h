@@ -268,7 +268,38 @@ struct Laplician_1D
 		m_x.assign(size, 1);
 	}
 
-	void init(Kernel_Prameter_Type& param, int size);
+	void init(Kernel_Prameter_Type& param, int size)
+	{
+		init_host(param, size);
+
+		m_ell_A.assign(size * 3, 0);
+		m_ell_J.assign(size * 4, 0);
+		for (int i = 0; i < size; i++)
+		{
+			param.b = m_b;
+			param.x = m_x;
+			param.x0 = m_x0;
+			param.col = size;
+
+			m_ell_J[0 * size + i] = m_A[i].size();
+			for (int j = 0; j < m_A[i].size(); j++)
+			{
+				m_ell_A[j * size + i] = m_A[i][j];
+				m_ell_J[(j + 1) * size + i] = m_column_index[i][j];
+			}
+		}
+		param.A.data = m_ell_A.data();
+		param.A.count = 3 * size;
+		param.A.col = size;
+
+		param.J.data = m_ell_J.data();
+		param.J.count = 4 * size;
+		param.J.col = size;
+
+		param.b = m_b;
+		param.x = m_x;
+		param.x0 = m_x0;
+	}
 
 	bool verify(const Kernel_Prameter_Type& param)
 	{
@@ -301,47 +332,51 @@ private:
 	std::vector<T> m_x0;
 	int m_size;
 
-	std::vector<float> ell_A;
-	std::vector<int> ell_J;
+	std::vector<float> m_ell_A;
+	std::vector<int> m_ell_J;
 };
 
 
 
-void Laplician_1D<float, Matrix_Vector_Multiplication_ELL>::init(ELL_Matrix_And_Vector<float>& param, int size)
-{
-	init_host(param, size);
+//void Laplician_1D<float, Matrix_Vector_Multiplication_ELL>::init(ELL_Matrix_And_Vector<float>& param, int size)
+//{
+//	init_host(param, size);
+//
+//	m_ell_A.assign(size * 3, 0);
+//	m_ell_J.assign(size * 4, 0);
+//	for (int i = 0; i < size; i++)
+//	{
+//		param.b = m_b;
+//		param.x = m_x;
+//		param.x0 = m_x0;
+//		param.col = size;
+//
+//		m_ell_J[0 * size + i] = m_A[i].size();
+//		for (int j = 0; j < m_A[i].size(); j++)
+//		{
+//			m_ell_A[j * size + i] = m_A[i][j];
+//			m_ell_J[(j + 1) * size + i] = m_column_index[i][j];
+//		}
+//	}
+//	param.A.data = m_ell_A.data();
+//	param.A.count = 3 * size;
+//	param.A.col = size;
+//
+//	param.J.data = m_ell_J.data();
+//	param.J.count = 4 * size;
+//	param.J.col = size;
+//
+//	param.b = m_b;
+//	param.x = m_x;
+//	param.x0 = m_x0;
+//
+//}
 
-	ell_A.assign(size * 3, 0);
-	ell_J.assign(size * 4, 0);
-	for (int i = 0; i < size; i++)
-	{
-		param.b = m_b;
-		param.x = m_x;
-		param.x0 = m_x0;
-		param.col = size;
-
-		ell_J[0 * size + i] = m_A[i].size();
-		for (int j = 0; j < m_A[i].size(); j++)
-		{
-			ell_A[j * size + i] = m_A[i][j];
-			ell_J[(j + 1) * size + i] = m_column_index[i][j];
-		}
-		param.A.data = ell_A.data();
-		param.A.count = 3 * size;
-		param.A.col = size;
-
-		param.J.data = ell_J.data();
-		param.J.count = 4 * size;
-		param.J.col = size;
-	}
-
-}
-
-void Laplician_1D<float, Matrix_Vector_Multiplication_CSR>::init(CSR_Matrix_And_Vector<float>& param, int size)
-{
-	init_host(param, size);
-
-	std::vector<float> csr_A(size * 3,0);
-}
+//void Laplician_1D<float, Matrix_Vector_Multiplication_CSR>::init(CSR_Matrix_And_Vector<float>& param, int size)
+//{
+//	init_host(param, size);
+//
+//	std::vector<float> csr_A(size * 3,0);
+//}
 
 
