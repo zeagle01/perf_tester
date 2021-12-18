@@ -216,14 +216,14 @@ private:
 
 
 template<typename T, template<typename >typename Kt>
-struct Laplician_1D
+struct Laplician_1D_Template
 {
 	using param_list = type_list<>;
 	using Kernel = Kt<T>;
 	using Data_Type = T;
 	using Kernel_Prameter_Type =  typename Kernel::template Parameter_Type<T>;
 
-	void init_host(Kernel_Prameter_Type& param, int size)
+	void init_host(int size)
 	{
 		m_size = size;
 
@@ -241,7 +241,7 @@ struct Laplician_1D
 		{
 			m_A.push_back(std::vector<T>());
 			auto& row_i_of_A = m_A.back();
-			row_i_of_A.push_back(2);
+			row_i_of_A.push_back(2); //put diagonal first
 			row_i_of_A.push_back(-1);
 			row_i_of_A.push_back(-1);
 
@@ -268,19 +268,56 @@ struct Laplician_1D
 		m_x.assign(size, 1);
 	}
 
-	void init(Kernel_Prameter_Type& param, int size)
+
+	bool verify(const Kernel_Prameter_Type& param)
 	{
-		init_host(param, size);
+		std::vector<float> exp(m_size, 0.f);
+		exp[0] = 1.f;
+		exp[m_size - 1] = 1.f;
+		for (int i = 0; i < m_size; i++)
+		{
+			if (std::abs(param.x[i] - exp[i]) > 1e-6f)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	size_t get_problem_size(int size)
+	{
+		return sizeof(T) * size;
+	}
+
+	size_t get_operation_size(int size)
+	{
+		return get_problem_size(size) * 3;
+	}
+
+
+	std::vector<std::vector<T>> m_A;
+	std::vector<std::vector<int>> m_column_index;
+	std::vector<T> m_b;
+	std::vector<T> m_x;
+	std::vector<T> m_x0;
+	int m_size;
+
+};
+
+template<typename T, template<typename >typename Kt>
+struct Laplician_1D;
+
+template<typename T>
+struct Laplician_1D<T, Matrix_Vector_Multiplication_ELL> : Laplician_1D_Template<T, Matrix_Vector_Multiplication_ELL>
+{
+	void init(ELL_Matrix_And_Vector<T>& param, int size)
+	{
+		init_host( size);
 
 		m_ell_A.assign(size * 3, 0);
 		m_ell_J.assign(size * 4, 0);
 		for (int i = 0; i < size; i++)
 		{
-			param.b = m_b;
-			param.x = m_x;
-			param.x0 = m_x0;
-			param.col = size;
-
 			m_ell_J[0 * size + i] = m_A[i].size();
 			for (int j = 0; j < m_A[i].size(); j++)
 			{
@@ -300,83 +337,43 @@ struct Laplician_1D
 		param.x = m_x;
 		param.x0 = m_x0;
 	}
-
-	bool verify(const Kernel_Prameter_Type& param)
-	{
-		for (int i = 0; i < m_size; i++)
-		{
-			if (param.x[i] > 1.f)
-			{
-
-				return false;
-			}
-		}
-		return true;
-	}
-
-	size_t get_problem_size(int size)
-	{
-		return sizeof(T) * size;
-	}
-
-	size_t get_operation_size(int size)
-	{
-		return get_problem_size(size) * 3;
-	}
-
-private:
-	std::vector<std::vector<T>> m_A;
-	std::vector<std::vector<int>> m_column_index;
-	std::vector<T> m_b;
-	std::vector<T> m_x;
-	std::vector<T> m_x0;
-	int m_size;
-
-	std::vector<float> m_ell_A;
+	std::vector<T> m_ell_A;
 	std::vector<int> m_ell_J;
 };
 
 
 
-//void Laplician_1D<float, Matrix_Vector_Multiplication_ELL>::init(ELL_Matrix_And_Vector<float>& param, int size)
-//{
-//	init_host(param, size);
-//
-//	m_ell_A.assign(size * 3, 0);
-//	m_ell_J.assign(size * 4, 0);
-//	for (int i = 0; i < size; i++)
-//	{
-//		param.b = m_b;
-//		param.x = m_x;
-//		param.x0 = m_x0;
-//		param.col = size;
-//
-//		m_ell_J[0 * size + i] = m_A[i].size();
-//		for (int j = 0; j < m_A[i].size(); j++)
-//		{
-//			m_ell_A[j * size + i] = m_A[i][j];
-//			m_ell_J[(j + 1) * size + i] = m_column_index[i][j];
-//		}
-//	}
-//	param.A.data = m_ell_A.data();
-//	param.A.count = 3 * size;
-//	param.A.col = size;
-//
-//	param.J.data = m_ell_J.data();
-//	param.J.count = 4 * size;
-//	param.J.col = size;
-//
-//	param.b = m_b;
-//	param.x = m_x;
-//	param.x0 = m_x0;
-//
-//}
+template<typename T>
+struct Laplician_1D<T, Matrix_Vector_Multiplication_CSR> : Laplician_1D_Template<T, Matrix_Vector_Multiplication_CSR>
+{
+	void init(CSR_Matrix_And_Vector<T>& param, int size)
+	{
+		init_host( size);
+		m_CSR_I.resize(size + 1);
+		m_CSR_I[0] = 0;
+		for (int i = 0; i < m_A.size(); i++)
+		{
+			m_CSR_I[i + 1] += m_CSR_I[i] + m_A[i].size();
+			for (int j = 0; j < m_A[i].size(); j++)
+			{
+				m_CSR_A.push_back(m_A[i][j]);
+				m_CSR_J.push_back(m_column_index[i][j]);
+			}
+		}
 
-//void Laplician_1D<float, Matrix_Vector_Multiplication_CSR>::init(CSR_Matrix_And_Vector<float>& param, int size)
-//{
-//	init_host(param, size);
-//
-//	std::vector<float> csr_A(size * 3,0);
-//}
+		param.A = m_CSR_A;
+		param.I = m_CSR_I;
+		param.J = m_CSR_J;
+
+		param.b = m_b;
+		param.x = m_x;
+		param.x0 = m_x0;
+	}
+
+	std::vector<T> m_CSR_A;
+	std::vector<int> m_CSR_I;
+	std::vector<int> m_CSR_J;
+};
+
 
 

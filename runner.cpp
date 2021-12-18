@@ -23,6 +23,57 @@ void Runner::run(Test_Case* test_case)
 }
 
 
+std::vector<std::unique_ptr<Test_Case>> Runner::get_cases()
+{
+	std::vector<std::unique_ptr<Test_Case>> ret;
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Vector_Add<float >, CPU >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Vector_Add<float >, CUDA<Launch_Config<128>> >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CUDA<Launch_Config<128>> >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_CSR>, CUDA<Launch_Config<128>> >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CPU >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_CSR>, CPU >
+	>());
+
+
+
+
+	//m_cases.push_back(std::make_unique<Cuda_Random>());
+
+	return ret;
+}
 
 void Runner::run()
 {
@@ -31,51 +82,14 @@ void Runner::run()
 		os = std::make_unique<std::ofstream>("result.txt");
 	}
 
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case<   Vector_Add<float >, CPU >
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case<   Vector_Add<float >, CUDA<Launch_Config<128>> >
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
-//	>());
-//
-//	m_cases.push_back(std::make_unique<
-//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
-//	>());
 
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CUDA<Launch_Config<128>> >
-	>());
-
-	m_cases.push_back(std::make_unique<
-		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CPU >
-	>());
-
-
-
-
-
-//	///////////cuda launch config test/////////////
-
-	//m_cases.push_back(std::make_unique<Cuda_Random>());
 
 
 	*os << "#";
-	for (int i = 0; i < m_cases.size(); i++)
+	auto cases = get_cases();
+	for (int i = 0; i < cases.size(); i++)
 	{
-		*os << " " << m_cases[i]->get_name();
+		*os << " " << cases[i]->get_name();
 	}
 	*os << std::endl;
 
@@ -85,28 +99,30 @@ void Runner::run()
 
 		CE_INFO("----------size {0}", size);
 
-		for (int i = 0; i < m_cases.size(); i++)
+		auto cases = get_cases(); //recreate cases
+
+		for (int i = 0; i < cases.size(); i++)
 		{
-			m_cases[i]->init(size);
+			cases[i]->init(size);
 
 			long average_duration=0;
 			for (int avg_i = 0; avg_i < m_average_num; avg_i++)
 			{
-				run(m_cases[i].get());
+				run(cases[i].get());
 				average_duration += m_duration;
-				CE_INFO("{0} duration {1} ", m_cases[i]->get_name(), m_duration);
+				CE_INFO("{0} duration {1} ", cases[i]->get_name(), m_duration);
 			}
 			average_duration /= m_average_num;
-			*os << m_cases[i]->get_problem_size_in_byte() << " ";
-			*os << m_cases[i]->get_operation_size_with_respect_to_byte() << " ";
+			*os << cases[i]->get_problem_size_in_byte() << " ";
+			*os << cases[i]->get_operation_size_with_respect_to_byte() << " ";
 			*os << average_duration << " ";
 
 			if (m_verify)
 			{
-				bool good = m_cases[i]->verify();
+				bool good = cases[i]->verify();
 				if (!good)
 				{
-					CE_ERROR("case {0} {1} verify failed", m_cases[i]->get_name(), (void*)m_cases[i].get());
+					CE_ERROR("case {0} {1} verify failed", cases[i]->get_name(), (void*)cases[i].get());
 				}
 			}
 		}

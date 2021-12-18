@@ -140,7 +140,8 @@ struct CSR_Matrix_And_Vector
 	Device_Pointer<T> A;
 	Device_Pointer<int> I;
 	Device_Pointer<int> J;
-	Device_Pointer<float> b;
+	Device_Pointer<T> b;
+	Device_Pointer<T> x0;
 
 	Device_Pointer<T> x;
 
@@ -153,11 +154,13 @@ struct Matrix_Vector_Multiplication_CSR :With_Parameter_Type<CSR_Matrix_And_Vect
 	static KERNEL_MODIFIER
 		void apply(CSR_Matrix_And_Vector<T>& param, int i)
 	{
+		T Ax = T(0);
 		for (int k = param.I[i]; k <param. I[i + 1]; k++)
 		{
 			int j = param.J[k];
-			param.x[i] += param.A[k] * param.b[j];
+			Ax += param.A[k] * param.x0[j];
 		}
+		param.x[i] = Ax;
 	}
 
 };
@@ -190,7 +193,8 @@ struct Matrix_Vector_Multiplication_ELL :With_Parameter_Type<ELL_Matrix_And_Vect
 			int j = param.J(k + 1, i);
 			Ax += param.A(k, i) * param.x0[j];
 		}
-		param.x[i] += (param.b[i] - Ax) / param.A(0, i);
+		//param.x[i] += (param.b[i] - Ax) / param.A(0, i);
+		param.x[i] = Ax;
 	}
 
 };

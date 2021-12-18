@@ -52,9 +52,10 @@ public:
 	};
 	std::string get_name() override 
 	{ 
-
 		auto problem_type_str = std::string(typeid(Problem).name());
 		auto problem_str = strip_type_string(problem_type_str, "\\s+|<|>");
+
+		auto problem_template_str = extrext_template(problem_type_str).back();
 
 		auto problem_param_type_str = Extract_Name_Of_Type_List<Problem::param_list>::value;
 		auto problem_param_str = strip_type_string(problem_param_type_str, "\\s+");
@@ -67,15 +68,42 @@ public:
 
 		auto data_type_str = std::string(typeid(T).name());
 
-		std::string ret = problem_str + "<" + data_type_str + "," + problem_param_str + ">_" + device_str + "<" + device_param_str + ">";
+
+		std::string ret = problem_str + "<" + data_type_str + "," + problem_template_str + "," + problem_param_str + ">_" + device_str + "<" + device_param_str + ">";
 		return ret;
 	};
 
 
 private:
-	std::string strip_type_string(const std::string& type_string,std::string delimeter)
+	std::vector<std::string> extrext_template(const std::string& type_string)
 	{
-		std::string ret;
+		std::vector<std::string> ret;
+
+		ret = re_search(type_string, "<.*>");
+		if (!ret.empty())
+		{
+			ret = strip_type_string_vector(ret[0], "\\s+|,|<|>");
+		}
+		return ret;
+	}
+
+	std::vector<std::string> re_search(const std::string& type_string, const std::string& re_pattern)
+	{
+		std::vector<std::string> ret;
+
+		std::regex rgx(re_pattern);
+		std::smatch m;
+		std::regex_search(type_string, m, rgx);
+		for (auto x : m)
+		{
+			ret.push_back(x);
+		}
+		return ret;
+	}
+
+	std::vector<std::string> strip_type_string_vector(const std::string& type_string,std::string delimeter)
+	{
+		std::vector<std::string> ret;
 		if (type_string.empty())
 		{
 			return ret;
@@ -89,11 +117,28 @@ private:
 			std::string cc = std::string(*it);
 			if (cc != "struct")
 			{
-				ret.append(cc);
-				return ret;
+				ret.push_back(cc);
 			}
 		}
 		return ret;
+	}
+
+	std::string strip_type_string(const std::string& type_string,std::string delimeter)
+	{
+		std::string ret;
+		if (type_string.empty())
+		{
+			return ret;
+		}
+		auto v = strip_type_string_vector(type_string, delimeter);
+		if (v.empty())
+		{
+			return ret;
+		}
+		else
+		{
+			return v[0];
+		}
 	}
 private:
 
