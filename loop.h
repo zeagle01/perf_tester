@@ -60,7 +60,7 @@ struct Loop<T, OMP_Imp, Kernel> :Default_Loop<T, Kernel::template Parameter_Type
 #pragma omp parallel for
 		for (int i = 0; i < size; i++)
 		{
-			Kernel::apply(in, out, in_col, in_row, out_col, out_row, i);
+			Kernel::apply(kernel_param_device, i);
 		}
 	}
 };

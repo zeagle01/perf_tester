@@ -36,7 +36,7 @@ launch_config.h
 
 target_include_directories(perf_test PUBLIC external/spdlog/include)
 
-target_compile_features(perf_test PRIVATE cxx_std_17)
+target_compile_features(perf_test PRIVATE cxx_std_20)
 
 include(FindCUDAToolkit)
 if(CUDAToolkit_FOUND)

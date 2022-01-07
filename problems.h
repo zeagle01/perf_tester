@@ -312,17 +312,20 @@ struct Laplician_1D<T, Matrix_Vector_Multiplication_ELL> : Laplician_1D_Template
 {
 	void init(ELL_Matrix_And_Vector<T>& param, int size)
 	{
-		init_host( size);
+
+		using Base = Laplician_1D_Template<T, Matrix_Vector_Multiplication_ELL>;
+
+		Base::init_host( size);
 
 		m_ell_A.assign(size * 3, 0);
 		m_ell_J.assign(size * 4, 0);
 		for (int i = 0; i < size; i++)
 		{
-			m_ell_J[0 * size + i] = m_A[i].size();
-			for (int j = 0; j < m_A[i].size(); j++)
+			m_ell_J[0 * size + i] = Base::m_A[i].size();
+			for (int j = 0; j < Base::m_A[i].size(); j++)
 			{
-				m_ell_A[j * size + i] = m_A[i][j];
-				m_ell_J[(j + 1) * size + i] = m_column_index[i][j];
+				m_ell_A[j * size + i] = Base::m_A[i][j];
+				m_ell_J[(j + 1) * size + i] = Base::m_column_index[i][j];
 			}
 		}
 		param.A.data = m_ell_A.data();
@@ -333,9 +336,9 @@ struct Laplician_1D<T, Matrix_Vector_Multiplication_ELL> : Laplician_1D_Template
 		param.J.count = 4 * size;
 		param.J.col = size;
 
-		param.b = m_b;
-		param.x = m_x;
-		param.x0 = m_x0;
+		param.b = Base::m_b;
+		param.x = Base::m_x;
+		param.x0 = Base::m_x0;
 	}
 	std::vector<T> m_ell_A;
 	std::vector<int> m_ell_J;
@@ -348,16 +351,18 @@ struct Laplician_1D<T, Matrix_Vector_Multiplication_CSR> : Laplician_1D_Template
 {
 	void init(CSR_Matrix_And_Vector<T>& param, int size)
 	{
-		init_host( size);
+		using Base = Laplician_1D_Template<T, Matrix_Vector_Multiplication_CSR>;
+
+		Base::init_host(size);
 		m_CSR_I.resize(size + 1);
 		m_CSR_I[0] = 0;
-		for (int i = 0; i < m_A.size(); i++)
+		for (int i = 0; i < Base::m_A.size(); i++)
 		{
-			m_CSR_I[i + 1] += m_CSR_I[i] + m_A[i].size();
-			for (int j = 0; j < m_A[i].size(); j++)
+			m_CSR_I[i + 1] += m_CSR_I[i] + Base::m_A[i].size();
+			for (int j = 0; j < Base::m_A[i].size(); j++)
 			{
-				m_CSR_A.push_back(m_A[i][j]);
-				m_CSR_J.push_back(m_column_index[i][j]);
+				m_CSR_A.push_back(Base::m_A[i][j]);
+				m_CSR_J.push_back(Base::m_column_index[i][j]);
 			}
 		}
 
@@ -365,9 +370,9 @@ struct Laplician_1D<T, Matrix_Vector_Multiplication_CSR> : Laplician_1D_Template
 		param.I = m_CSR_I;
 		param.J = m_CSR_J;
 
-		param.b = m_b;
-		param.x = m_x;
-		param.x0 = m_x0;
+		param.b = Base::m_b;
+		param.x = Base::m_x;
+		param.x0 = Base::m_x0;
 	}
 
 	std::vector<T> m_CSR_A;

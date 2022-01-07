@@ -65,7 +65,10 @@ struct OMP_Imp :CPU_Base<T, Kernel_Param>, Loop_Locator<T, OMP_Imp>
 {
 	void sync_wait()
 	{
-#pragma omp barrier
+
+		//TODO: 
+//#pragma omp barrier 
+
 	}
 
 };

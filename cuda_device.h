@@ -55,14 +55,14 @@ struct CUDA_Imp :Loop_Locator<T, CUDA_Imp, Launch_Config>
 
 	void dowload(Kernel_Param<T>& host_param, const Kernel_Param<T>& device_param) 
 	{ 
-		For_Each_Member<Kernel_Param<T>>::apply<Dev_Ptr_Only, Download_Cuda_Data>(host_param, device_param);
+		For_Each_Member<Kernel_Param<T>>::template apply<Dev_Ptr_Only, Download_Cuda_Data>(host_param, device_param);
 	}
 
 	void upload(Kernel_Param<T>& device_param, const Kernel_Param<T>& host_param) 
 	{
-		For_Each_Member<Kernel_Param<T>>::apply<Value_Only, Copy_NEWREFACTOR>(device_param, host_param);
+		For_Each_Member<Kernel_Param<T>>::template apply<Value_Only, Copy_NEWREFACTOR>(device_param, host_param);
 
-		For_Each_Member<Kernel_Param<T>>::apply<Dev_Ptr_Only,Upload_Cuda_Data>(device_param, host_param);
+		For_Each_Member<Kernel_Param<T>>::template apply<Dev_Ptr_Only,Upload_Cuda_Data>(device_param, host_param);
 	}
 
 
@@ -74,7 +74,7 @@ struct CUDA_Imp :Loop_Locator<T, CUDA_Imp, Launch_Config>
 
 	void free_device_source(Kernel_Param<T>& device_param) 
 	{
-		For_Each_Member<Kernel_Param<T>>::apply<Dev_Ptr_Only, Free_Cuda_Data>(device_param);
+		For_Each_Member<Kernel_Param<T>>::template apply<Dev_Ptr_Only, Free_Cuda_Data>(device_param);
 	}
 };
 

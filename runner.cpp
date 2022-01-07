@@ -27,29 +27,29 @@ std::vector<std::unique_ptr<Test_Case>> Runner::get_cases()
 {
 	std::vector<std::unique_ptr<Test_Case>> ret;
 
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<   Vector_Add<float >, CPU >
-	>());
-
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
-	>());
-
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
-	>());
-
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<   Vector_Add<float >, CUDA<Launch_Config<128>> >
-	>());
-
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
-	>());
-
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
-	>());
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<   Vector_Add<float >, CPU >
+//	>());
+//
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
+//	>());
+//
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
+//	>());
+//
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<   Vector_Add<float >, CUDA<Launch_Config<128>> >
+//	>());
+//
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
+//	>());
+//
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
+//	>());
 
 	ret.push_back(std::make_unique<
 		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CUDA<Launch_Config<128>> >
@@ -82,9 +82,6 @@ void Runner::run()
 		os = std::make_unique<std::ofstream>("result.txt");
 	}
 
-
-
-
 	*os << "#";
 	auto cases = get_cases();
 	for (int i = 0; i < cases.size(); i++)
@@ -110,7 +107,7 @@ void Runner::run()
 			{
 				run(cases[i].get());
 				average_duration += m_duration;
-				CE_INFO("{0} duration {1} ", cases[i]->get_name(), m_duration);
+				//CE_INFO("{0} duration {1} ", cases[i]->get_name(), m_duration);
 			}
 			average_duration /= m_average_num;
 			*os << cases[i]->get_problem_size_in_byte() << " ";
@@ -122,7 +119,7 @@ void Runner::run()
 				bool good = cases[i]->verify();
 				if (!good)
 				{
-					CE_ERROR("case {0} {1} verify failed", cases[i]->get_name(), (void*)cases[i].get());
+					//CE_ERROR("case {0} {1} verify failed", cases[i]->get_name(), (void*)cases[i].get());
 				}
 			}
 		}

@@ -87,7 +87,7 @@ void Profiler::begin_session(std::string session_name, std::string output_file)
 	}
 	else
 	{
-		CE_ERROR("can't open {output_file}", output_file);
+		//CE_ERROR("can't open {output_file}", output_file);
 	}
 }
 
