@@ -108,6 +108,7 @@ void Runner::run()
 				run(cases[i].get());
 				average_duration += m_duration;
 				//CE_INFO("{0} duration {1} ", cases[i]->get_name(), m_duration);
+				printf("%s duration %f \n", cases[i]->get_name().c_str(), m_duration);
 			}
 			average_duration /= m_average_num;
 			*os << cases[i]->get_problem_size_in_byte() << " ";
@@ -120,6 +121,7 @@ void Runner::run()
 				if (!good)
 				{
 					//CE_ERROR("case {0} {1} verify failed", cases[i]->get_name(), (void*)cases[i].get());
+					printf("case %s %p verify failed \n", cases[i]->get_name().c_str(), (void*)cases[i].get());
 				}
 			}
 		}

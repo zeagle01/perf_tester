@@ -31,6 +31,10 @@ class_reflection.h
 macro_loop.h
 cuda_device.h
 launch_config.h
+reduction_sum_cpu.h
+reduction_sum_cpu.cpp
+reduction_sum_cuda.h
+reduction_sum_cuda.cpp
 )
 
 
