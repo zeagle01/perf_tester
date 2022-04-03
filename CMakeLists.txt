@@ -35,6 +35,10 @@ reduction_sum_cpu.h
 reduction_sum_cpu.cpp
 reduction_sum_cuda.h
 reduction_sum_cuda.cpp
+serial_quick_sort.h
+serial_quick_sort.cpp
+tbb_quick_sort.h
+tbb_quick_sort.cpp
 )
 
 
@@ -64,3 +68,4 @@ if(OpenMP_CXX_FOUND)
 else()
 	message("omp not found!")
 endif()
+

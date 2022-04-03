@@ -10,6 +10,8 @@
 #include "problems.h"
 #include "compute_kernels.h"
 #include "launch_config.h"
+#include "serial_quick_sort.h"
+#include "tbb_quick_sort.h"
 
 
 void Runner::run(Test_Case* test_case)
@@ -51,26 +53,29 @@ std::vector<std::unique_ptr<Test_Case>> Runner::get_cases()
 //		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CUDA<Launch_Config<128>> >
 //	>());
 
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CUDA<Launch_Config<128>> >
-	>());
-
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_CSR>, CUDA<Launch_Config<128>> >
-	>());
-
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CPU >
-	>());
-
-	ret.push_back(std::make_unique<
-		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_CSR>, CPU >
-	>());
-
-
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CUDA<Launch_Config<128>> >
+//	>());
+//
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_CSR>, CUDA<Launch_Config<128>> >
+//	>());
+//
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_ELL>, CPU >
+//	>());
+//
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<  Laplician_1D<float, Matrix_Vector_Multiplication_CSR>, CPU >
+//	>());
 
 
-	//m_cases.push_back(std::make_unique<Cuda_Random>());
+
+
+	//ret.push_back(std::make_unique<Cuda_Random>());
+	ret.push_back(std::make_unique<Serial_Quick_Sort>());
+	ret.push_back(std::make_unique<TBB_Quick_Sort>());
+	ret.push_back(std::make_unique<TBB_Parallel_Sort>());
 
 	return ret;
 }
@@ -100,15 +105,14 @@ void Runner::run()
 
 		for (int i = 0; i < cases.size(); i++)
 		{
-			cases[i]->init(size);
-
-			long average_duration=0;
+			long average_duration = 0;
 			for (int avg_i = 0; avg_i < m_average_num; avg_i++)
 			{
+				cases[i]->init(size);
 				run(cases[i].get());
 				average_duration += m_duration;
-				//CE_INFO("{0} duration {1} ", cases[i]->get_name(), m_duration);
-				printf("%s duration %f \n", cases[i]->get_name().c_str(), m_duration);
+				CE_INFO("{0} duration {1} ", cases[i]->get_name(), m_duration);
+				//printf("%s duration %f \n", cases[i]->get_name().c_str(), m_duration);
 			}
 			average_duration /= m_average_num;
 			*os << cases[i]->get_problem_size_in_byte() << " ";
@@ -120,8 +124,8 @@ void Runner::run()
 				bool good = cases[i]->verify();
 				if (!good)
 				{
-					//CE_ERROR("case {0} {1} verify failed", cases[i]->get_name(), (void*)cases[i].get());
-					printf("case %s %p verify failed \n", cases[i]->get_name().c_str(), (void*)cases[i].get());
+					CE_ERROR("case {0} {1} verify failed", cases[i]->get_name(), (void*)cases[i].get());
+					//printf("case %s %p verify failed \n", cases[i]->get_name().c_str(), (void*)cases[i].get());
 				}
 			}
 		}
