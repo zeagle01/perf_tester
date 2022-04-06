@@ -55,7 +55,7 @@ template<
 struct Loop<T, OMP_Imp, Kernel> :Default_Loop<T, Kernel::template Parameter_Type >
 {
 
-	void apply(Kernel::template Parameter_Type& kernel_param_device, int size)
+	void apply(Kernel::template Parameter_Type<T>& kernel_param_device, int size)
 	{
 #pragma omp parallel for
 		for (int i = 0; i < size; i++)

@@ -29,22 +29,40 @@ std::vector<std::unique_ptr<Test_Case>> Runner::get_cases()
 {
 	std::vector<std::unique_ptr<Test_Case>> ret;
 
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Vector_Add<float >, CPU >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Vector_Add<float >, OMP >
+	>());
+//
 //	ret.push_back(std::make_unique<
-//		Composed_Test_Case<   Vector_Add<float >, CPU >
+//		Composed_Test_Case<  Vector_Add<float >, CUDA<Launch_Config<128>> >
 //	>());
+
 //
 //	ret.push_back(std::make_unique<
 //		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CPU >
 //	>());
 //
+
 //	ret.push_back(std::make_unique<
-//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, CPU >
+//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<100>>, OMP >
 //	>());
-//
+
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<  Multiply_Add_N_Times<float, Repeat<1000>>, CUDA<Launch_Config<128>> >
+//	>());
+
 //	ret.push_back(std::make_unique<
 //		Composed_Test_Case<   Vector_Add<float >, CUDA<Launch_Config<128>> >
 //	>());
 //
+
+//	ret.push_back(std::make_unique<
+//		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, OMP >
+//	>());
 //	ret.push_back(std::make_unique<
 //		Composed_Test_Case<   Convolution<float, Neighbor_Width<1>>, CUDA<Launch_Config<128>> >
 //	>());
@@ -75,7 +93,7 @@ std::vector<std::unique_ptr<Test_Case>> Runner::get_cases()
 	//ret.push_back(std::make_unique<Cuda_Random>());
 	ret.push_back(std::make_unique<Serial_Quick_Sort>());
 	ret.push_back(std::make_unique<TBB_Quick_Sort>());
-	ret.push_back(std::make_unique<TBB_Parallel_Sort>());
+	//ret.push_back(std::make_unique<TBB_Parallel_Sort>());
 
 	return ret;
 }

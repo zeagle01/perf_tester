@@ -42,6 +42,13 @@ DELEARE_CUDA_LOOP_TEMPLATE_1(float, Add_Kernel,  Launch_Config<1024>)
 DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Mupltiply_Add_N_Times_Kernel,  Launch_Config<128>, Repeat<10>)
 DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Mupltiply_Add_N_Times_Kernel,  Launch_Config<128>, Repeat<100>)
 DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Mupltiply_Add_N_Times_Kernel,  Launch_Config<128>, Repeat<1000>)
+
+DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Mupltiply_Add_N_Times_Kernel,  Launch_Config<64>, Repeat<1000>)
+DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Mupltiply_Add_N_Times_Kernel,  Launch_Config<128>, Repeat<1000>)
+DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Mupltiply_Add_N_Times_Kernel,  Launch_Config<256>, Repeat<1000>)
+DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Mupltiply_Add_N_Times_Kernel,  Launch_Config<512>, Repeat<1000>)
+DELEARE_CUDA_LOOP_TEMPLATE_1(float,  Mupltiply_Add_N_Times_Kernel,  Launch_Config<1024>, Repeat<1000>)
+
 DELEARE_CUDA_LOOP_TEMPLATE_1(double, Mupltiply_Add_N_Times_Kernel,  Launch_Config<128>, Repeat<100>)
 DELEARE_CUDA_LOOP_TEMPLATE_1(double, Mupltiply_Add_N_Times_Kernel,  Launch_Config<128>, Repeat<1000>)
 
