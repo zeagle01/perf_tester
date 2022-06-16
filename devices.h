@@ -92,3 +92,16 @@ struct PPL
 };
 
 
+
+/// TBB
+template<typename T, template<typename> typename Kernel_Param>
+struct TBB_Imp :CPU_Base<T, Kernel_Param>, Loop_Locator<T, TBB_Imp>
+{
+};
+
+struct TBB 
+{ 
+	using param_list = type_list<>;
+	template <typename T, template<typename> typename Kernel_Param>
+	using type = TBB_Imp<T, Kernel_Param >;
+};

@@ -4,6 +4,7 @@
 #include "devices.h"
 #include "cuda_device.h"
 #include "ppl.h"
+#include "tbb/tbb.h"
 
 
 
@@ -106,3 +107,22 @@ struct Loop<T, CUDA_Imp, Kernel, Launch_Config> :Default_Loop<T, Kernel::templat
 };
 
 
+
+/// TBB ///////////////
+template<
+	typename T,
+	typename Kernel
+	>
+struct Loop<T, TBB_Imp, Kernel> :Default_Loop<T, Kernel::template Parameter_Type >
+{
+
+	void apply(Kernel::template Parameter_Type<T>& kernel_param_device, int size)
+	{
+		tbb::parallel_for(0, size,
+			[&kernel_param_device](int i)
+			{
+				Kernel::apply(kernel_param_device, i);
+			}
+		);
+	}
+};

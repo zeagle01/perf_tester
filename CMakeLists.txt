@@ -69,3 +69,8 @@ else()
 	message("omp not found!")
 endif()
 
+find_package(TBB CONFIG REQUIRED)
+target_link_libraries(perf_test PRIVATE TBB::tbb)
+
+add_custom_command(TARGET perf_test POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	$<TARGET_FILE_DIR:TBB::tbb>/../bin/tbb$<$<CONFIG:Debug>:_debug>.dll $<TARGET_FILE_DIR:perf_test>) 

@@ -36,6 +36,22 @@ std::vector<std::unique_ptr<Test_Case>> Runner::get_cases()
 	ret.push_back(std::make_unique<
 		Composed_Test_Case<   Vector_Add<float >, OMP >
 	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Vector_Add<float >, TBB >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Multiply_Add_N_Times<float,Repeat<100> >, CPU >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Multiply_Add_N_Times<float, Repeat<100>>, OMP >
+	>());
+
+	ret.push_back(std::make_unique<
+		Composed_Test_Case<   Multiply_Add_N_Times<float,Repeat<100> >, TBB >
+	>());
 //
 //	ret.push_back(std::make_unique<
 //		Composed_Test_Case<  Vector_Add<float >, CUDA<Launch_Config<128>> >
@@ -91,8 +107,8 @@ std::vector<std::unique_ptr<Test_Case>> Runner::get_cases()
 
 
 	//ret.push_back(std::make_unique<Cuda_Random>());
-	ret.push_back(std::make_unique<Serial_Quick_Sort>());
-	ret.push_back(std::make_unique<TBB_Quick_Sort>());
+	//ret.push_back(std::make_unique<Serial_Quick_Sort>());
+	//ret.push_back(std::make_unique<TBB_Quick_Sort>());
 	//ret.push_back(std::make_unique<TBB_Parallel_Sort>());
 
 	return ret;
